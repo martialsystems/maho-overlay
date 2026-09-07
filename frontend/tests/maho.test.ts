@@ -3,6 +3,20 @@ import { readFile } from "node:fs/promises";
 import { buildGridMesh, groupIndexAt, skinVertices } from "../src/maho/buildMesh";
 import type { MeshSpec } from "../src/maho/buildMesh";
 import { MahoMotion } from "../src/maho/motion";
+import type { LayerSpec } from "../src/maho/layerPlayer";
+
+const layers = JSON.parse(
+  await readFile(new URL("../public/maho/layers.json", import.meta.url), "utf8"),
+) as LayerSpec;
+assert.deepEqual(
+  layers.layers.map((layer) => layer.id),
+  ["hair", "body", "neck", "collar", "face", "bangs"],
+);
+assert.equal(layers.layers.find((layer) => layer.id === "face")?.rotate, true);
+assert.ok(layers.layers.find((layer) => layer.id === "hair")?.rotate !== true);
+assert.ok(layers.layers.find((layer) => layer.id === "neck")?.rotate !== true);
+assert.ok(layers.layers.find((layer) => layer.id === "collar")?.rotate !== true);
+assert.ok(layers.layers.find((layer) => layer.id === "bangs")?.rotate !== true);
 
 function pngSize(bytes: Uint8Array): { width: number; height: number } {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -66,7 +80,17 @@ assert.doesNotMatch(
   /LINE_STRIP|LINES\b/,
 );
 
-for (const name of ["maho.png", "maho-eyes-closed.png", "maho-angry.png"] as const) {
+for (const name of [
+  "maho.png",
+  "layers/face.png",
+  "layers/face-angry.png",
+  "layers/face-eyes-closed.png",
+  "layers/bangs.png",
+  "layers/hair.png",
+  "layers/neck.png",
+  "layers/collar.png",
+  "layers/body.png",
+] as const) {
   const bytes = await readFile(new URL(`../public/maho/${name}`, import.meta.url));
   assert.equal(bytes[0], 0x89);
   const size = pngSize(bytes);
@@ -105,6 +129,8 @@ assert.match(playerSrc, /generateMipmap/);
 assert.doesNotMatch(playerSrc, /discard/);
 const puppetSrc = await readFile(new URL("../src/components/MahoPuppet.tsx", import.meta.url), "utf8");
 assert.match(puppetSrc, /webgl2/);
+assert.match(puppetSrc, /MahoLayerPlayer/);
+assert.match(puppetSrc, /layers\.json/);
 assert.match(puppetSrc, /antialias:\s*false/);
 assert.match(playerSrc, /disable\(gl\.DITHER\)/);
 assert.doesNotMatch(
