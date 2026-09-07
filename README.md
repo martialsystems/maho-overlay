@@ -65,5 +65,4 @@ Same start later: double-click `start_local.bat` or `start_windows.bat`.
 
 ## Changelog
 
-- Own git (2026-09-07): martialsystems/maho-overlay. Fresh history.
 - Maho overlay (2026-09-07): hoodie still as a full-res mesh. Cat click is mad + vein mark, no audio.
