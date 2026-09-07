@@ -99,7 +99,7 @@ assert.doesNotMatch(app, /Live2DCharacter/);
 assert.doesNotMatch(app, /sendInteraction/);
 
 const playerSrc = await readFile(new URL("../src/maho/meshPlayer.ts", import.meta.url), "utf8");
-assert.match(playerSrc, /const zoom = 0\.72/);
+assert.match(playerSrc, /const zoom = 0\.9/);
 assert.match(playerSrc, /LINEAR_MIPMAP_LINEAR/);
 assert.match(playerSrc, /generateMipmap/);
 assert.doesNotMatch(playerSrc, /discard/);

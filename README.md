@@ -8,7 +8,7 @@ MIT for the software. Character art keeps its own terms: see [NOTICE](NOTICE).
 
 - Head: her face and chin turn. Hair stays its own layer.
 - Cat: she gets mad, and a vein mark pops on her hair. No sound yet.
-- Drag: move the window
+- Drag: grab her anywhere and move the window. A short click on the head or cat still fires.
 - 45 seconds with no click: eyes close, `z`s over her head
 - Click again: she wakes
 - Right-click, or the Maho Overlay menu, then Quit: close

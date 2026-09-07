@@ -73,11 +73,11 @@ button {
 
 .anger-mark {
   position: absolute;
-  top: 28%;
-  left: 32%;
+  top: 26%;
+  left: 30%;
   z-index: 13;
-  width: 44px;
-  height: 44px;
+  width: 58px;
+  height: 58px;
   pointer-events: none;
   opacity: 0;
   transform: scale(0.55) rotate(-14deg);
@@ -91,11 +91,11 @@ button {
 
 .zzz-layer {
   position: absolute;
-  top: 22%;
-  left: 58%;
+  top: 20%;
+  left: 60%;
   z-index: 12;
-  width: 72px;
-  height: 90px;
+  width: 96px;
+  height: 120px;
   pointer-events: none;
 }
 
@@ -111,21 +111,21 @@ button {
 .zzz-a {
   left: 0;
   bottom: 0;
-  font-size: 18px;
+  font-size: 24px;
   animation-delay: 0s;
 }
 
 .zzz-b {
-  left: 18px;
-  bottom: 10px;
-  font-size: 22px;
+  left: 22px;
+  bottom: 12px;
+  font-size: 28px;
   animation-delay: 0.45s;
 }
 
 .zzz-c {
-  left: 38px;
-  bottom: 22px;
-  font-size: 28px;
+  left: 48px;
+  bottom: 28px;
+  font-size: 36px;
   animation-delay: 0.9s;
 }
 
@@ -139,6 +139,6 @@ button {
   }
   100% {
     opacity: 0;
-    transform: translate(18px, -52px) rotate(12deg);
+    transform: translate(22px, -68px) rotate(12deg);
   }
 }

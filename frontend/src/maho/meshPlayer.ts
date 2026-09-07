@@ -144,7 +144,7 @@ export class MahoMeshPlayer {
     let scaleY = 1;
     if (canvasAspect > imageAspect) scaleX = imageAspect / canvasAspect;
     else scaleY = canvasAspect / imageAspect;
-    const zoom = 0.72;
+    const zoom = 0.9;
     scaleX *= zoom;
     scaleY *= zoom;
 

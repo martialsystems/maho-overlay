@@ -2,8 +2,8 @@ const { app, BrowserWindow, ipcMain, Menu, screen } = require("electron");
 const path = require("path");
 
 const RENDERER_URL = process.env.AMADEUS_RENDERER_URL || "http://127.0.0.1:5173/";
-const WINDOW_WIDTH = 520;
-const WINDOW_HEIGHT = 720;
+const WINDOW_WIDTH = 560;
+const WINDOW_HEIGHT = 780;
 
 app.setName("Maho Overlay");
 app.commandLine.appendSwitch("enable-transparent-visuals");

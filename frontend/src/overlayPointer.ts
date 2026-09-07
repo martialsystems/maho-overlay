@@ -1,6 +1,8 @@
-/** Desktop overlay pointer: click-through on empty pixels, drag the figure. */
+/** Desktop overlay pointer: drag the figure first. Stationary clicks still hit. */
 
 type OverlayHost = NonNullable<Window["overlay"]>;
+
+export const DRAG_THRESHOLD_PX = 5;
 
 export function startOverlayPointer(options: {
   hitTest: (clientX: number, clientY: number) => boolean;
@@ -11,7 +13,7 @@ export function startOverlayPointer(options: {
   return attachOverlayPointer(overlay, options);
 }
 
-function attachOverlayPointer(
+export function attachOverlayPointer(
   host: OverlayHost,
   options: {
     hitTest: (clientX: number, clientY: number) => boolean;
@@ -19,7 +21,9 @@ function attachOverlayPointer(
   },
 ): () => void {
   let ignoring = true;
+  let tracking = false;
   let dragging = false;
+  let suppressClick = false;
   let lastX = 0;
   let lastY = 0;
   let raf = 0;
@@ -33,11 +37,27 @@ function attachOverlayPointer(
     host.setClickThrough(next);
   }
 
+  function onSolid(event: MouseEvent): boolean {
+    const overButton =
+      event.target instanceof Element &&
+      event.target.closest(".touch-button") !== null;
+    return overButton || options.hitTest(event.clientX, event.clientY);
+  }
+
   function onMove(event: MouseEvent) {
-    if (dragging) {
-      host.moveBy(event.screenX - lastX, event.screenY - lastY);
-      lastX = event.screenX;
-      lastY = event.screenY;
+    if (tracking) {
+      const dx = event.screenX - lastX;
+      const dy = event.screenY - lastY;
+      if (!dragging && dx * dx + dy * dy >= DRAG_THRESHOLD_PX * DRAG_THRESHOLD_PX) {
+        dragging = true;
+        suppressClick = true;
+      }
+      if (dragging) {
+        host.moveBy(dx, dy);
+        lastX = event.screenX;
+        lastY = event.screenY;
+        event.preventDefault();
+      }
       return;
     }
 
@@ -47,45 +67,51 @@ function attachOverlayPointer(
       raf = 0;
       const current = pending;
       pending = null;
-      if (!current || dragging) return;
-      const overButton =
-        current.target instanceof Element &&
-        current.target.closest(".touch-button") !== null;
-      const solid = overButton || options.hitTest(current.clientX, current.clientY);
-      applyIgnore(!solid);
+      if (!current || tracking) return;
+      applyIgnore(!onSolid(current));
     });
   }
 
   function onDown(event: MouseEvent) {
     if (event.button !== 0) return;
-    const overButton =
-      event.target instanceof Element &&
-      event.target.closest(".touch-button") !== null;
-    if (overButton || options.hitTest(event.clientX, event.clientY)) {
-      options.onActivity?.();
-    }
-    if (overButton) return;
-    if (!options.hitTest(event.clientX, event.clientY)) return;
-    dragging = true;
+    if (!onSolid(event)) return;
+    options.onActivity?.();
+    tracking = true;
+    dragging = false;
+    suppressClick = false;
     lastX = event.screenX;
     lastY = event.screenY;
-    event.preventDefault();
   }
 
   function onUp() {
+    tracking = false;
     dragging = false;
+  }
+
+  function onMouseUp(event: MouseEvent) {
+    if (dragging) event.preventDefault();
+    onUp();
+  }
+
+  function onClick(event: MouseEvent) {
+    if (!suppressClick) return;
+    suppressClick = false;
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   window.addEventListener("mousemove", onMove);
   window.addEventListener("mousedown", onDown);
-  window.addEventListener("mouseup", onUp);
+  window.addEventListener("mouseup", onMouseUp);
+  window.addEventListener("click", onClick, true);
   window.addEventListener("blur", onUp);
 
   return () => {
     cancelAnimationFrame(raf);
     window.removeEventListener("mousemove", onMove);
     window.removeEventListener("mousedown", onDown);
-    window.removeEventListener("mouseup", onUp);
+    window.removeEventListener("mouseup", onMouseUp);
+    window.removeEventListener("click", onClick, true);
     window.removeEventListener("blur", onUp);
     host.setClickThrough(true);
   };
