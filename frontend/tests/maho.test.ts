@@ -101,6 +101,8 @@ assert.match(playerSrc, /generateMipmap/);
 assert.doesNotMatch(playerSrc, /discard/);
 const puppetSrc = await readFile(new URL("../src/components/MahoPuppet.tsx", import.meta.url), "utf8");
 assert.match(puppetSrc, /webgl2/);
+assert.match(puppetSrc, /antialias:\s*false/);
+assert.match(playerSrc, /disable\(gl\.DITHER\)/);
 assert.doesNotMatch(
   await readFile(new URL("../src/maho/buildMesh.ts", import.meta.url), "utf8"),
   /torsoScaleY/,

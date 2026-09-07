@@ -6,10 +6,15 @@ body,
   margin: 0;
   background: transparent;
   overflow: hidden;
+  outline: none;
+  box-shadow: none;
+  border: none;
 }
 
 * {
   box-sizing: border-box;
+  outline: none;
+  box-shadow: none;
 }
 
 body {
@@ -41,6 +46,9 @@ button {
   height: 100%;
   touch-action: none;
   outline: none;
+  border: none;
+  box-shadow: none;
+  background: transparent;
 }
 
 .touch-button {
@@ -58,8 +66,9 @@ button {
   cursor: default;
 }
 
+.touch-button:focus,
 .touch-button:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline: none;
 }
 
 .anger-mark {

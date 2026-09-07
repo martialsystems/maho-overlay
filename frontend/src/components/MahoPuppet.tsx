@@ -62,7 +62,7 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
       const gl = canvas.getContext("webgl2", {
         alpha: true,
         premultipliedAlpha: true,
-        antialias: true,
+        antialias: false,
         preserveDrawingBuffer: true,
       });
       if (!gl) return;

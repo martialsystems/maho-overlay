@@ -48,6 +48,8 @@ function createOverlay() {
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   win.setIgnoreMouseEvents(true, { forward: true });
   win.setMenuBarVisibility(false);
+  win.setHasShadow(false);
+  win.setBackgroundColor("#00000000");
 
   win.once("ready-to-show", () => win.showInactive());
   win.on("closed", () => app.quit());
