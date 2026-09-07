@@ -64,6 +64,3 @@ Same start later: double-click `start_local.bat` or `start_windows.bat`.
 
 ## Changelog
 
-- Size menu (2026-09-07): Small, Medium, Large, XL. Large is the current size. Right-click or the Maho Overlay menu.
-- Full-res mesh again (2026-09-07). Click the cat. Drag still works on the whole figure.
-- Maho overlay (2026-09-07): hoodie still as a full-res mesh. Cat click is mad + vein mark, no audio.
