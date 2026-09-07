@@ -6,7 +6,7 @@ MIT for the software. Character art keeps its own terms: see [NOTICE](NOTICE).
 
 ## Use it
 
-- Head: her face and chin turn. Hair stays its own layer.
+- Head: her face, chin, and bangs turn. Side hair stays in front of the bangs. Neck and collar stay put.
 - Cat: she gets mad, and a vein mark pops on her hair. No sound yet.
 - Drag: grab her anywhere and move the window. A short click on the head or cat still fires.
 - 45 seconds with no click: eyes close, `z`s over her head
@@ -65,4 +65,5 @@ Same start later: double-click `start_local.bat` or `start_windows.bat`.
 
 ## Changelog
 
+- Neck and collar fill the hoodie opening (2026-09-07). Bangs turn with the head, under the side hair.
 - Maho overlay (2026-09-07): hoodie still as a full-res mesh. Cat click is mad + vein mark, no audio.

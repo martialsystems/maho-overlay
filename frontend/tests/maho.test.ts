@@ -10,13 +10,15 @@ const layers = JSON.parse(
 ) as LayerSpec;
 assert.deepEqual(
   layers.layers.map((layer) => layer.id),
-  ["hair", "body", "neck", "collar", "face", "bangs"],
+  ["hair", "body", "neck", "collar", "cat", "face", "bangs", "side-bangs"],
 );
 assert.equal(layers.layers.find((layer) => layer.id === "face")?.rotate, true);
+assert.equal(layers.layers.find((layer) => layer.id === "bangs")?.rotate, true);
 assert.ok(layers.layers.find((layer) => layer.id === "hair")?.rotate !== true);
 assert.ok(layers.layers.find((layer) => layer.id === "neck")?.rotate !== true);
 assert.ok(layers.layers.find((layer) => layer.id === "collar")?.rotate !== true);
-assert.ok(layers.layers.find((layer) => layer.id === "bangs")?.rotate !== true);
+assert.ok(layers.layers.find((layer) => layer.id === "side-bangs")?.rotate !== true);
+assert.equal(layers.layers.find((layer) => layer.id === "cat")?.bob, true);
 
 function pngSize(bytes: Uint8Array): { width: number; height: number } {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -86,9 +88,11 @@ for (const name of [
   "layers/face-angry.png",
   "layers/face-eyes-closed.png",
   "layers/bangs.png",
+  "layers/side-bangs.png",
   "layers/hair.png",
   "layers/neck.png",
   "layers/collar.png",
+  "layers/cat.png",
   "layers/body.png",
 ] as const) {
   const bytes = await readFile(new URL(`../public/maho/${name}`, import.meta.url));
@@ -127,6 +131,9 @@ assert.match(playerSrc, /const zoom = 0\.9/);
 assert.match(playerSrc, /LINEAR_MIPMAP_LINEAR/);
 assert.match(playerSrc, /generateMipmap/);
 assert.doesNotMatch(playerSrc, /discard/);
+const layerPlayerSrc = await readFile(new URL("../src/maho/layerPlayer.ts", import.meta.url), "utf8");
+assert.match(layerPlayerSrc, /TEXTURE_MIN_FILTER,\s*gl\.LINEAR\)/);
+assert.doesNotMatch(layerPlayerSrc, /generateMipmap/);
 const puppetSrc = await readFile(new URL("../src/components/MahoPuppet.tsx", import.meta.url), "utf8");
 assert.match(puppetSrc, /webgl2/);
 assert.match(puppetSrc, /MahoLayerPlayer/);
