@@ -149,6 +149,7 @@ export class MahoMeshPlayer {
     scaleY *= zoom;
 
     gl.disable(gl.DITHER);
+    gl.disable(gl.CULL_FACE);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.useProgram(this.program);

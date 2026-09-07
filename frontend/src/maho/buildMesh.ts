@@ -56,26 +56,27 @@ export function buildGridMesh(spec: MeshSpec): SkinnedMesh {
     }
   }
 
-  const raw: number[] = [];
+  const indices = new Uint16Array(cols * rows * 6);
+  let cursor = 0;
   for (let j = 0; j < rows; j++) {
     for (let i = 0; i < cols; i++) {
       const a = j * vertsX + i;
       const b = a + 1;
       const c = a + vertsX;
       const d = c + 1;
-      const covered = [a, b, c, d].some((index) => {
-        const name = GROUP_PRIORITY[group[index]];
-        return name !== undefined && containsUv(spec.groups[name], rest[index * 2], rest[index * 2 + 1]);
-      });
-      if (!covered) continue;
-      raw.push(a, c, b, b, c, d);
+      indices[cursor++] = a;
+      indices[cursor++] = c;
+      indices[cursor++] = b;
+      indices[cursor++] = b;
+      indices[cursor++] = c;
+      indices[cursor++] = d;
     }
   }
 
   return {
     rest,
     uv,
-    indices: Uint16Array.from(raw),
+    indices,
     group,
     groupNames: [...GROUP_PRIORITY],
   };

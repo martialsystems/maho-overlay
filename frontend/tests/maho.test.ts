@@ -59,8 +59,12 @@ assert.ok(chinMove > 0.01, `chin should swing, got ${chinMove}`);
 assert.equal(hairMove, 0);
 assert.equal(posed[plushI * 2 + 1], mesh.rest[plushI * 2 + 1]);
 assert.notEqual(posed[bodyI * 2 + 1], mesh.rest[bodyI * 2 + 1]);
-assert.ok(mesh.indices.length > 0);
+assert.equal(mesh.indices.length, spec.cols * spec.rows * 6);
 assert.equal(mesh.rest.length, mesh.uv.length);
+assert.doesNotMatch(
+  await readFile(new URL("../src/maho/meshPlayer.ts", import.meta.url), "utf8"),
+  /LINE_STRIP|LINES\b/,
+);
 
 for (const name of ["maho.png", "maho-eyes-closed.png", "maho-angry.png"] as const) {
   const bytes = await readFile(new URL(`../public/maho/${name}`, import.meta.url));
