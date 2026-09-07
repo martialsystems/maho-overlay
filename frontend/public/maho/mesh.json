@@ -1,0 +1,26 @@
+{
+  "width": 1264,
+  "height": 1568,
+  "cols": 18,
+  "rows": 24,
+  "groups": {
+    "body": { "u0": 0.08, "v0": 0.42, "u1": 0.92, "v1": 0.98 },
+    "plush": { "u0": 0.32, "v0": 0.54, "u1": 0.68, "v1": 0.8 },
+    "arms": { "u0": 0.18, "v0": 0.52, "u1": 0.82, "v1": 0.94 },
+    "head": { "u0": 0.08, "v0": 0.0, "u1": 0.92, "v1": 0.52 },
+    "face": { "u0": 0.33, "v0": 0.18, "u1": 0.69, "v1": 0.53 },
+    "eyes": { "u0": 0.38, "v0": 0.34, "u1": 0.64, "v1": 0.43 }
+  },
+  "bones": {
+    "torso": { "pivot": [0.5, 0.58], "groups": ["body"] },
+    "plush": { "pivot": [0.5, 0.64], "groups": ["plush"] },
+    "face": { "pivot": [0.515, 0.3], "groups": ["face", "eyes"] },
+    "head": { "pivot": [0.515, 0.28], "groups": ["head"] },
+    "arms": { "pivot": [0.5, 0.7], "groups": ["arms"] }
+  },
+  "textures": {
+    "idle": "/maho/maho.png",
+    "eyes-closed": "/maho/maho-eyes-closed.png",
+    "angry": "/maho/maho-angry.png"
+  }
+}

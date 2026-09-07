@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+*.env
+.venv/
+.venv-xtts/
+venv/
+
+# Backend runtime
+backend/__pycache__/
+backend/unused_files/
+backend/data/api_key.txt
+backend/data/memory.db
+backend/data/memory.json
+backend/generated/
+backend/ttsout/generated.wav
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Logs
+log_*.txt
+*.log
+
+# Local
+.DS_Store
+Thumbs.db
+.runtime/
+GPT-SoVITS/
