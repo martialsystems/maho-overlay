@@ -59,7 +59,7 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
       const motion = motionRef.current;
       motion.onClipEnd = () => onBusyRef.current?.(false);
 
-      const gl = canvas.getContext("webgl", {
+      const gl = canvas.getContext("webgl2", {
         alpha: true,
         premultipliedAlpha: true,
         antialias: true,
@@ -101,8 +101,8 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
         player?.draw(motion.texture, {
           faceRot: motion.faceRot,
           hairSway: motion.hairSway,
-          torsoScaleY: motion.torsoScaleY,
-          armSqueeze: motion.armSqueeze,
+          torsoBob: motion.torsoBob,
+          armBob: motion.armBob,
           plushBob: motion.plushBob,
           shakeX: motion.shakeX,
         }, canvas.width, canvas.height);

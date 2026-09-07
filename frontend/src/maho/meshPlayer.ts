@@ -1,12 +1,12 @@
 import { buildGridMesh, skinVertices, type BonePose, type MeshSpec, type SkinnedMesh } from "./buildMesh";
 import type { MahoTexture } from "./motion";
 
-const VERTEX_SOURCE = `
-attribute vec2 a_pos;
-attribute vec2 a_uv;
+const VERTEX_SOURCE = `#version 300 es
+in vec2 a_pos;
+in vec2 a_uv;
 uniform vec2 u_scale;
 uniform vec2 u_offset;
-varying vec2 v_uv;
+out vec2 v_uv;
 void main() {
   vec2 p = (a_pos - 0.5) * u_scale + 0.5 + u_offset;
   gl_Position = vec4(p * vec2(2.0, -2.0) + vec2(-1.0, 1.0), 0.0, 1.0);
@@ -14,17 +14,17 @@ void main() {
 }
 `;
 
-const FRAGMENT_SOURCE = `
-precision mediump float;
-varying vec2 v_uv;
+const FRAGMENT_SOURCE = `#version 300 es
+precision highp float;
+in vec2 v_uv;
 uniform sampler2D u_tex;
+out vec4 fragColor;
 void main() {
-  vec4 color = texture2D(u_tex, v_uv);
-  gl_FragColor = color;
+  fragColor = texture(u_tex, v_uv);
 }
 `;
 
-function compile(gl: WebGLRenderingContext, type: number, source: string): WebGLShader {
+function compile(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader {
   const shader = gl.createShader(type);
   if (!shader) throw new Error("Could not create shader");
   gl.shaderSource(shader, source);
@@ -37,7 +37,7 @@ function compile(gl: WebGLRenderingContext, type: number, source: string): WebGL
   return shader;
 }
 
-function loadTexture(gl: WebGLRenderingContext, url: string): Promise<WebGLTexture> {
+function loadTexture(gl: WebGL2RenderingContext, url: string): Promise<WebGLTexture> {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => {
@@ -50,9 +50,19 @@ function loadTexture(gl: WebGLRenderingContext, url: string): Promise<WebGLTextu
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      const anisotropic = gl.getExtension("EXT_texture_filter_anisotropic");
+      if (anisotropic) {
+        const max = gl.getParameter(anisotropic.MAX_TEXTURE_MAX_ANISOTROPY_EXT) as number;
+        gl.texParameterf(
+          gl.TEXTURE_2D,
+          anisotropic.TEXTURE_MAX_ANISOTROPY_EXT,
+          Math.min(8, max),
+        );
+      }
       resolve(texture);
     };
     image.onerror = () => reject(new Error(`Failed to load ${url}`));
@@ -61,7 +71,7 @@ function loadTexture(gl: WebGLRenderingContext, url: string): Promise<WebGLTextu
 }
 
 export class MahoMeshPlayer {
-  private readonly gl: WebGLRenderingContext;
+  private readonly gl: WebGL2RenderingContext;
   private readonly spec: MeshSpec;
   private readonly mesh: SkinnedMesh;
   private readonly skinned: Float32Array;
@@ -77,7 +87,7 @@ export class MahoMeshPlayer {
   private ready = false;
   private destroyed = false;
 
-  constructor(gl: WebGLRenderingContext, spec: MeshSpec) {
+  constructor(gl: WebGL2RenderingContext, spec: MeshSpec) {
     this.gl = gl;
     this.spec = spec;
     this.mesh = buildGridMesh(spec);

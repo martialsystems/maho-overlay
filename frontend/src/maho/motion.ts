@@ -20,8 +20,8 @@ export class MahoMotion {
   busy = false;
   faceRot = 0;
   hairSway = 0;
-  torsoScaleY = 1;
-  armSqueeze = 0;
+  torsoBob = 0;
+  armBob = 0;
   plushBob = 0;
   shakeX = 0;
   onClipEnd: (() => void) | null = null;
@@ -59,10 +59,10 @@ export class MahoMotion {
     const dt = Math.min(deltaSeconds, 0.1);
     this.time += dt;
 
-    const breathe = Math.sin(this.time * 1.7);
-    this.torsoScaleY = 1 + breathe * 0.012;
-    this.armSqueeze = 0.5 + 0.5 * breathe;
-    this.plushBob = Math.sin(this.time * 2.1) * 0.006;
+    const breathe = Math.sin(this.time * 1.35);
+    this.torsoBob = breathe * 0.003;
+    this.armBob = breathe * 0.002;
+    this.plushBob = Math.sin(this.time * 1.6) * 0.004;
 
     if (this.clip) {
       this.clip.elapsed += dt * 1000;
@@ -70,7 +70,7 @@ export class MahoMotion {
       if (this.clip.name === "PatReaction") {
         this.faceRot = Math.sin(t * Math.PI) * 0.16;
         this.hairSway = Math.sin(t * Math.PI) * 0.02;
-        this.armSqueeze = 1;
+        this.armBob = Math.sin(t * Math.PI) * 0.004;
         this.texture = this.sleeping ? "eyes-closed" : "idle";
         this.angerMark = false;
         this.shakeX = 0;

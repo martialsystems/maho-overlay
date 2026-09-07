@@ -48,8 +48,8 @@ const hairI = nearest(0.2, 0.12);
 skinVertices(spec, mesh, {
   faceRot: 0.25,
   hairSway: 0,
-  torsoScaleY: 1.2,
-  armSqueeze: 0,
+  torsoBob: 0.02,
+  armBob: 0,
   plushBob: 0,
   shakeX: 0,
 }, posed);
@@ -96,7 +96,15 @@ assert.doesNotMatch(app, /sendInteraction/);
 
 const playerSrc = await readFile(new URL("../src/maho/meshPlayer.ts", import.meta.url), "utf8");
 assert.match(playerSrc, /const zoom = 0\.72/);
+assert.match(playerSrc, /LINEAR_MIPMAP_LINEAR/);
+assert.match(playerSrc, /generateMipmap/);
 assert.doesNotMatch(playerSrc, /discard/);
+const puppetSrc = await readFile(new URL("../src/components/MahoPuppet.tsx", import.meta.url), "utf8");
+assert.match(puppetSrc, /webgl2/);
+assert.doesNotMatch(
+  await readFile(new URL("../src/maho/buildMesh.ts", import.meta.url), "utf8"),
+  /torsoScaleY/,
+);
 
 const hits = await readFile(new URL("../src/interactions.ts", import.meta.url), "utf8");
 assert.match(hits, /top: "72%"/);
