@@ -10,7 +10,7 @@ MIT for the software. Character art keeps its own terms: see [NOTICE](NOTICE).
 - Drag: grab her anywhere and move the window. A short click on the cat still fires.
 - 45 seconds with no click: eyes close, `z`s over her head
 - Click again: she wakes
-- Right-click, or the Maho Overlay menu, then Quit: close
+- Right-click, or the Maho Overlay menu: Size (Small, Medium, Large, XL) and Quit. Large is the starting size. The art stays the full 1264×1568 PNG.
 
 Clicks go through empty space around her, so you can still use the apps underneath.
 
@@ -64,5 +64,6 @@ Same start later: double-click `start_local.bat` or `start_windows.bat`.
 
 ## Changelog
 
+- Size menu (2026-09-07): Small, Medium, Large, XL. Large is the current size. Right-click or the Maho Overlay menu.
 - Full-res mesh again (2026-09-07). Click the cat. Drag still works on the whole figure.
 - Maho overlay (2026-09-07): hoodie still as a full-res mesh. Cat click is mad + vein mark, no audio.
