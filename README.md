@@ -1,14 +1,13 @@
 # maho-overlay
 
-Maho sits on your desktop. Click her head or the cat. After a while she falls asleep.
+Maho sits on your desktop. Click the cat. After a while she falls asleep.
 
 MIT for the software. Character art keeps its own terms: see [NOTICE](NOTICE).
 
 ## Use it
 
-- Head: her face, chin, and bangs turn. Side hair stays in front of the bangs. Neck and collar stay put.
 - Cat: she gets mad, and a vein mark pops on her hair. No sound yet.
-- Drag: grab her anywhere and move the window. A short click on the head or cat still fires.
+- Drag: grab her anywhere and move the window. A short click on the cat still fires.
 - 45 seconds with no click: eyes close, `z`s over her head
 - Click again: she wakes
 - Right-click, or the Maho Overlay menu, then Quit: close
@@ -65,5 +64,5 @@ Same start later: double-click `start_local.bat` or `start_windows.bat`.
 
 ## Changelog
 
-- Neck and collar fill the hoodie opening (2026-09-07). Bangs turn with the head, under the side hair.
+- Full-res mesh again (2026-09-07). Click the cat. Drag still works on the whole figure.
 - Maho overlay (2026-09-07): hoodie still as a full-res mesh. Cat click is mad + vein mark, no audio.

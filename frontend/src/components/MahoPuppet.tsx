@@ -7,7 +7,8 @@ import {
 } from "react";
 
 import type { OverlayCharacterHandle } from "../overlayCharacter";
-import { MahoLayerPlayer, type LayerSpec } from "../maho/layerPlayer";
+import type { MeshSpec } from "../maho/buildMesh";
+import { MahoMeshPlayer } from "../maho/meshPlayer";
 import { MahoMotion } from "../maho/motion";
 
 type Props = {
@@ -18,7 +19,7 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
   function MahoPuppet({ onBusyChange }, ref) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const motionRef = useRef(new MahoMotion());
-    const playerRef = useRef<MahoLayerPlayer | null>(null);
+    const playerRef = useRef<MahoMeshPlayer | null>(null);
     const onBusyRef = useRef(onBusyChange);
     const angerRef = useRef(false);
     const [anger, setAnger] = useState(false);
@@ -82,7 +83,7 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
       const observer = new ResizeObserver(resize);
       observer.observe(canvas);
 
-      let player: MahoLayerPlayer | null = null;
+      let player: MahoMeshPlayer | null = null;
 
       const render = () => {
         if (destroyed) return;
@@ -99,15 +100,19 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
         gl.clear(gl.COLOR_BUFFER_BIT);
         player?.draw(motion.texture, {
           faceRot: motion.faceRot,
+          hairSway: motion.hairSway,
           torsoBob: motion.torsoBob,
+          armBob: motion.armBob,
+          plushBob: motion.plushBob,
+          shakeX: motion.shakeX,
         }, canvas.width, canvas.height);
         frame = requestAnimationFrame(render);
       };
 
       void (async () => {
-        const spec = (await (await fetch("/maho/layers.json")).json()) as LayerSpec;
+        const spec = (await (await fetch("/maho/mesh.json")).json()) as MeshSpec;
         if (destroyed) return;
-        player = new MahoLayerPlayer(gl, spec);
+        player = new MahoMeshPlayer(gl, spec);
         playerRef.current = player;
         await player.initialize();
         if (destroyed) {
