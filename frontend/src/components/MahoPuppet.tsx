@@ -68,6 +68,7 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
       },
       stopSpeech() {
         speechRef.current?.stop();
+        motionRef.current.setSpeaking(false);
       },
     }), []);
 

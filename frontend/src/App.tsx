@@ -46,6 +46,7 @@ export default function App() {
       }
     } catch (error) {
       console.error("Interaction failed:", error);
+      characterRef.current?.stopSpeech();
       setBusy(false);
     }
   }

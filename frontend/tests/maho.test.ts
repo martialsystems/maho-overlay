@@ -13,6 +13,8 @@ function pngSize(bytes: Uint8Array): { width: number; height: number } {
 const spec = JSON.parse(
   await readFile(new URL("../public/maho/mesh.json", import.meta.url), "utf8"),
 ) as MeshSpec;
+assert.ok(spec.textures["angry-mouth-open"]);
+assert.ok(spec.textures["angry-mouth-half"]);
 
 assert.deepEqual(
   Object.keys(spec.groups).sort(),
@@ -74,6 +76,9 @@ for (const name of [
   "maho-mouth-blank.png",
   "maho-mouth-half.png",
   "maho-mouth-open.png",
+  "maho-angry-mouth-blank.png",
+  "maho-angry-mouth-half.png",
+  "maho-angry-mouth-open.png",
 ] as const) {
   const bytes = await readFile(new URL(`../public/maho/${name}`, import.meta.url));
   assert.equal(bytes[0], 0x89);
@@ -89,6 +94,12 @@ const openPng = await readFile(new URL("../public/maho/maho-mouth-open.png", imp
 assert.notEqual(Buffer.compare(idlePng, blankPng), 0);
 assert.notEqual(Buffer.compare(blankPng, halfPng), 0);
 assert.notEqual(Buffer.compare(halfPng, openPng), 0);
+const angryPng = await readFile(new URL("../public/maho/maho-angry.png", import.meta.url));
+const angryOpenPng = await readFile(new URL("../public/maho/maho-angry-mouth-open.png", import.meta.url));
+const angryHalfPng = await readFile(new URL("../public/maho/maho-angry-mouth-half.png", import.meta.url));
+assert.notEqual(Buffer.compare(angryPng, angryOpenPng), 0);
+assert.notEqual(Buffer.compare(angryHalfPng, angryOpenPng), 0);
+assert.notEqual(Buffer.compare(openPng, angryOpenPng), 0);
 
 const driver = new MouthDriver();
 assert.equal(driver.viseme(0), "idle");
@@ -122,10 +133,19 @@ assert.equal(talking.texture, "idle");
 
 const motion = new MahoMotion();
 assert.equal(motion.play("TapReaction"), "started");
-assert.equal(motion.texture, "angry");
+assert.equal(motion.texture, "angry-mouth-open");
 assert.equal(motion.angerMark, true);
 assert.equal(motion.play("PatReaction"), "busy");
+motion.setSpeaking(true);
+motion.setMouth("mouth-half");
+motion.update(0.016);
+assert.equal(motion.texture, "angry-mouth-half");
+motion.setMouth("mouth-open");
 for (let i = 0; i < 20; i++) motion.update(0.1);
+assert.equal(motion.texture, "angry-mouth-open");
+assert.equal(motion.angerMark, true);
+motion.setSpeaking(false);
+motion.update(0.016);
 assert.equal(motion.texture, "idle");
 assert.equal(motion.angerMark, false);
 assert.equal(motion.busy, false);

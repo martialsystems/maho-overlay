@@ -1,7 +1,16 @@
 import type { PlayMotionResult } from "../overlayCharacter";
 import type { MouthViseme } from "./viseme";
 
-export type MahoTexture = "idle" | "eyes-closed" | "angry" | "mouth-blank" | "mouth-half" | "mouth-open";
+export type MahoTexture =
+  | "idle"
+  | "eyes-closed"
+  | "angry"
+  | "mouth-blank"
+  | "mouth-half"
+  | "mouth-open"
+  | "angry-mouth-blank"
+  | "angry-mouth-half"
+  | "angry-mouth-open";
 
 const BLINK_EVERY_MS = 3200;
 const BLINK_HOLD_MS = 90;
@@ -33,6 +42,7 @@ export class MahoMotion {
   private blinkIn = BLINK_EVERY_MS;
   private blinkHold = 0;
   private clip: Clip | null = null;
+  private angryTalking = false;
 
   play(group: string): PlayMotionResult {
     if (this.busy) return "busy";
@@ -43,8 +53,10 @@ export class MahoMotion {
     }
     if (group === "TapReaction") {
       this.busy = true;
+      this.angryTalking = true;
       this.angerMark = true;
-      this.texture = "angry";
+      this.mouth = "mouth-open";
+      this.texture = "angry-mouth-open";
       this.clip = { name: "TapReaction", elapsed: 0, duration: TAP_MS };
       return "started";
     }
@@ -53,7 +65,7 @@ export class MahoMotion {
 
   setSleeping(sleeping: boolean): void {
     this.sleeping = sleeping;
-    if (sleeping && this.clip?.name !== "TapReaction") {
+    if (sleeping && this.clip?.name !== "TapReaction" && !this.angryTalking) {
       this.texture = "eyes-closed";
     }
   }
@@ -62,14 +74,30 @@ export class MahoMotion {
     this.speaking = speaking;
     if (speaking) {
       this.mouth = "mouth-open";
-      this.texture = "mouth-open";
-    } else {
-      this.mouth = "idle";
+      this.texture = this.talkTexture();
+      return;
+    }
+    this.mouth = "idle";
+    this.angryTalking = false;
+    this.angerMark = false;
+    if (!this.clip) {
+      this.busy = false;
+      this.texture = this.sleeping ? "eyes-closed" : "idle";
     }
   }
 
   setMouth(mouth: MouthViseme): void {
     this.mouth = mouth;
+    if (this.speaking || this.angryTalking) this.texture = this.talkTexture();
+  }
+
+  private talkTexture(): MahoTexture {
+    const mouth = this.mouth === "idle" ? "mouth-open" : this.mouth;
+    if (this.angryTalking) {
+      if (mouth === "mouth-half") return "angry-mouth-half";
+      return "angry-mouth-open";
+    }
+    return mouth;
   }
 
   update(deltaSeconds: number): void {
@@ -88,42 +116,50 @@ export class MahoMotion {
         this.faceRot = Math.sin(t * Math.PI) * 0.16;
         this.hairSway = Math.sin(t * Math.PI) * 0.02;
         this.armBob = Math.sin(t * Math.PI) * 0.004;
-        this.texture = this.sleeping ? "eyes-closed" : "idle";
-        this.angerMark = false;
         this.shakeX = 0;
+        this.angerMark = false;
+        if (this.speaking) this.texture = this.talkTexture();
+        else this.texture = this.sleeping ? "eyes-closed" : "idle";
       } else {
         const shake = Math.sin(t * Math.PI * 8) * (1 - t) * 0.008;
         this.shakeX = shake;
         this.faceRot = -0.03;
         this.hairSway = 0.01;
-        this.texture = "angry";
         this.angerMark = true;
+        this.texture = this.speaking || this.angryTalking ? this.talkTexture() : "angry";
       }
       if (t >= 1) {
         this.clip = null;
-        this.busy = false;
-        this.angerMark = false;
-        this.faceRot = 0;
-        this.hairSway = 0;
         this.shakeX = 0;
-        this.texture = this.sleeping ? "eyes-closed" : "idle";
-        this.onClipEnd?.();
+        if (this.speaking) {
+          this.faceRot = this.angryTalking ? -0.03 : 0;
+          this.angerMark = this.angryTalking;
+          this.texture = this.talkTexture();
+        } else {
+          this.angryTalking = false;
+          this.busy = false;
+          this.angerMark = false;
+          this.faceRot = 0;
+          this.hairSway = 0;
+          this.texture = this.sleeping ? "eyes-closed" : "idle";
+          this.onClipEnd?.();
+        }
       }
       return;
     }
 
-    this.faceRot = Math.sin(this.time * 0.7) * 0.012;
+    this.faceRot = this.angryTalking ? -0.03 : Math.sin(this.time * 0.7) * 0.012;
     this.hairSway = Math.sin(this.time * 0.45) * 0.01;
     this.shakeX = 0;
-    this.angerMark = false;
+    this.angerMark = this.angryTalking;
 
-    if (this.sleeping) {
+    if (this.sleeping && !this.speaking && !this.angryTalking) {
       this.texture = "eyes-closed";
       return;
     }
 
-    if (this.speaking) {
-      this.texture = this.mouth === "idle" ? "mouth-open" : this.mouth;
+    if (this.speaking || this.angryTalking) {
+      this.texture = this.talkTexture();
       return;
     }
 
