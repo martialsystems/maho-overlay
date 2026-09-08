@@ -29,7 +29,7 @@ assert.match(hits, /sfx: true/);
 assert.equal((hits.match(/sfx: true/g) ?? []).length, 1);
 assert.match(hits, /top: "26%"/);
 assert.doesNotMatch(hits, /backendId/);
-assert.match(hits, /PatReaction/);
+assert.doesNotMatch(hits, /PatReaction/);
 const speech = await readFile(new URL("../src/audio/SpeechPlayer.ts", import.meta.url), "utf8");
 assert.match(speech, /isSpeaking\(\): boolean/);
 assert.match(speech, /emitVisemes/);

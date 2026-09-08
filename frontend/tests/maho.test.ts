@@ -134,6 +134,11 @@ talking.setSpeaking(false);
 talking.update(0.016);
 assert.equal(talking.texture, "idle");
 
+const noTurn = new MahoMotion();
+noTurn.setSpeaking(true);
+noTurn.update(0.016);
+assert.ok(Math.abs(noTurn.faceRot) < 0.03);
+
 const motion = new MahoMotion();
 assert.equal(motion.play("TapReaction"), "started");
 assert.equal(motion.texture, "angry");
@@ -198,7 +203,7 @@ assert.match(hits, /label: "Cat"/);
 assert.match(hits, /label: "Head"/);
 assert.doesNotMatch(hits, /label: "Talk"/);
 assert.doesNotMatch(hits, /talk\.wav/);
-assert.match(hits, /PatReaction/);
+assert.doesNotMatch(hits, /PatReaction/);
 assert.match(hits, /\/maho\/head\.wav/);
 assert.match(hits, /sfx: true/);
 assert.match(puppetSrc, /MahoMeshPlayer/);

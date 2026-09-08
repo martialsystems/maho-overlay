@@ -9,7 +9,7 @@ export type Interaction = {
 
 export const interactions: Record<string, Interaction> = {
   head: {
-    motion: "PatReaction",
+    motion: "",
     label: "Head",
     speechUrl: "/maho/head.wav",
     // Hair crown in the window (~20% to 34%). Mesh zoom 0.9 plus y 0.05;
