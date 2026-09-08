@@ -23,13 +23,19 @@ export default function App() {
     if (busy) return;
     noteActivity();
     const interaction = interactions[name];
-    if (interaction.motion && interaction.speechUrl) {
-      const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
-      if (result !== "started") return;
+    if (interaction.sfx && interaction.speechUrl) {
+      if (interaction.motion) {
+        const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
+        if (result !== "started") return;
+      }
       void characterRef.current?.playSfx(interaction.speechUrl);
       return;
     }
     if (interaction.speechUrl) {
+      if (interaction.motion) {
+        const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
+        if (result !== "started") return;
+      }
       const url = interaction.speechUrl;
       void characterRef.current?.prepareSpeech().then(() =>
         characterRef.current?.playSpeech(url),
@@ -52,7 +58,7 @@ export default function App() {
             <button
               key={name}
               type="button"
-              className={name === "talk" ? "touch-button" : "touch-button touch-point"}
+              className="touch-button touch-point"
               style={interaction.position}
               aria-label={interaction.label}
               onClick={() => handleInteraction(name)}

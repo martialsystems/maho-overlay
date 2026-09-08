@@ -190,7 +190,9 @@ class SourceContractTests(unittest.TestCase):
         self.assertIn("Relative RMS", viseme)
         self.assertNotIn("predict_ja_viseme", viseme)
         self.assertNotIn("viseme_logreg", viseme)
-        self.assertIn('speechUrl: "/maho/talk.wav"', interactions)
+        self.assertIn('speechUrl: "/maho/head.wav"', interactions)
+        self.assertNotIn("talk.wav", interactions)
+        self.assertNotIn('label: "Talk"', interactions)
 
     def test_train_is_one_pool_not_two_stages(self):
         train = (SCRIPTS / "train_ja_viseme.py").read_text(encoding="utf-8")

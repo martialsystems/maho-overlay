@@ -33,11 +33,11 @@ Runtime always passes `speed_rate=1.0` (Maho's normal line). If the winner used 
 
 ```bash
 backend/.venv/bin/python scripts/predict_ja_viseme.py \
-  --wav frontend/public/maho/talk.wav \
+  --wav frontend/public/maho/head.wav \
   --speed-rate 1.0
 ```
 
-Predict only. No `fit`. The current Talk line is English (`talk.wav`, staff room). Live overlay Talk still uses MouthDriver relative RMS. Wire this track when a Japanese Maho line exists.
+Predict only. No `fit`. Live overlay Head is clip 10 (`head.wav`) with MouthDriver relative RMS. Cat stays closed-mouth SFX.
 
 ## Data
 
@@ -69,7 +69,7 @@ backend/.venv/bin/pip install -r scripts/requirements-ja-speech.txt
 backend/.venv/bin/python scripts/fetch_ja_speech.py
 backend/.venv/bin/python scripts/label_ja_vowels.py
 backend/.venv/bin/python scripts/train_ja_viseme.py
-backend/.venv/bin/python scripts/predict_ja_viseme.py --wav frontend/public/maho/talk.wav --speed-rate 1.0
+backend/.venv/bin/python scripts/predict_ja_viseme.py --wav frontend/public/maho/head.wav --speed-rate 1.0
 ```
 
 Cite the corpus you actually unpacked. JSUT is research/non-commercial. SpeedSpeech-JA-2022 is CC BY 4.0.
