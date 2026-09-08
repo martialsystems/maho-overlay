@@ -62,6 +62,7 @@ Same start later: double-click `start_local.bat` or `start_windows.bat`.
 | `start_local.bat` | Starts the overlay on Windows |
 | `docs/ja_speech.md` | Slow+normal Japanese viseme pool (offline) |
 | `docs/maho_voice.md` | Maho EN+JA script compile (offline) |
+| `docs/maho_chat.md` | Maho chat via Grok subagent (no overlay, no Llama) |
 | [LICENSE](LICENSE) | MIT for our software |
 | [NOTICE](NOTICE) | Character art terms |
 
