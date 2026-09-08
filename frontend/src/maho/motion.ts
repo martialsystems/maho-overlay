@@ -15,7 +15,7 @@ export type MahoTexture =
 const BLINK_EVERY_MS = 3200;
 const BLINK_HOLD_MS = 90;
 const PAT_MS = 900;
-const TAP_MS = 800;
+const TAP_MS = 1700;
 
 type Clip = {
   name: "PatReaction" | "TapReaction";

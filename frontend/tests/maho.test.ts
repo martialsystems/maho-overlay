@@ -142,7 +142,7 @@ assert.equal(motion.play("PatReaction"), "busy");
 motion.setMouth("mouth-open");
 motion.update(0.016);
 assert.equal(motion.texture, "angry");
-for (let i = 0; i < 12; i++) motion.update(0.1);
+for (let i = 0; i < 20; i++) motion.update(0.1);
 assert.equal(motion.texture, "idle");
 assert.equal(motion.angerMark, false);
 assert.equal(motion.busy, false);
