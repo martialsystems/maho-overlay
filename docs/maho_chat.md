@@ -26,6 +26,6 @@ backend/.venv/bin/python scripts/retrieve_maho.py \
 
 SG0 lab talk surfaces `kind: science`. Coffee surfaces `kind: chat`. Real time travel, memory, or Amadeus-as-AI should surface `kind` starting with `notes` from `docs/maho_science.md` (brain science first, GR as a skeptic).
 
-She is Leskinen’s graduate student: memory and AI are home turf. Time travel she knows and doubts.
+She is 21, Leskinen’s graduate researcher: memory and AI are home turf. Time travel she knows and doubts. Treat-me-as-a-child gets a correction. Lewd lines get a blush and a snap.
 
 Llama / GGUF is a later swap when the box has RAM. Do not load one here.

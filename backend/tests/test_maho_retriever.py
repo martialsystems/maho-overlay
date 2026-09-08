@@ -158,6 +158,9 @@ class SourceContractTests(unittest.TestCase):
         self.assertIn("Brain Science Institute", science)
         self.assertIn("Leskinen", science)
         self.assertIn("skeptic", science.lower())
+        self.assertIn("21", science)
+        self.assertIn("not a child", science.lower())
+        self.assertIn("blush", science.lower())
 
 
 if __name__ == "__main__":
