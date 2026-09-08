@@ -32,3 +32,4 @@ log_*.txt
 Thumbs.db
 .runtime/
 GPT-SoVITS/
+/data/

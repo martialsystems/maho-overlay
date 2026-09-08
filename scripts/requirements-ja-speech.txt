@@ -1,0 +1,5 @@
+# Offline viseme pool only. Overlay runtime does not import these.
+numpy==2.5.3
+scikit-learn==1.9.0
+pykakasi==2.3.0
+pyarrow==25.0.1
