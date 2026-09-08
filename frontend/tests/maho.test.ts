@@ -160,7 +160,9 @@ const app = await readFile(new URL("../src/App.tsx", import.meta.url), "utf8");
 assert.match(app, /MahoPuppet/);
 assert.doesNotMatch(app, /Live2DCharacter/);
 assert.match(app, /playSfx/);
+assert.match(app, /touch-point/);
 assert.doesNotMatch(app, /sendInteraction/);
+assert.doesNotMatch(app, /disabled=\{busy\}/);
 
 const playerSrc = await readFile(new URL("../src/maho/meshPlayer.ts", import.meta.url), "utf8");
 assert.match(playerSrc, /const zoom = 0\.9/);

@@ -67,10 +67,11 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
         }
       },
       async playSfx(url: string) {
-        const speech = speechRef.current;
-        if (!speech) return;
+        const audio = new Audio(url);
+        audio.crossOrigin = "anonymous";
+        audio.volume = 1;
         try {
-          await speech.play(url, { visemes: false });
+          await audio.play();
         } catch {
           /* click still shows angry even if the wav fails */
         }
@@ -89,7 +90,6 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
       let last = performance.now();
       const motion = motionRef.current;
       motion.onClipEnd = () => {
-        if (speechRef.current?.isSpeaking()) return;
         onBusyRef.current?.(false);
       };
       const speech = new SpeechPlayer({

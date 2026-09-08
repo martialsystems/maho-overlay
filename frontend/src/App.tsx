@@ -52,10 +52,9 @@ export default function App() {
             <button
               key={name}
               type="button"
-              className="touch-button"
+              className={name === "talk" ? "touch-button" : "touch-button touch-point"}
               style={interaction.position}
               aria-label={interaction.label}
-              disabled={busy}
               onClick={() => handleInteraction(name)}
             >
               {interaction.label}

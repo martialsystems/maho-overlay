@@ -37,11 +37,22 @@ export function attachOverlayPointer(
     host.setClickThrough(next);
   }
 
+  function pointingTarget(event: MouseEvent): boolean {
+    return (
+      event.target instanceof Element &&
+      event.target.closest(".touch-point") !== null
+    );
+  }
+
   function onSolid(event: MouseEvent): boolean {
     const overButton =
       event.target instanceof Element &&
       event.target.closest(".touch-button") !== null;
     return overButton || options.hitTest(event.clientX, event.clientY);
+  }
+
+  function applyCursor(event: MouseEvent) {
+    document.documentElement.style.cursor = pointingTarget(event) ? "pointer" : "";
   }
 
   function onMove(event: MouseEvent) {
@@ -69,6 +80,7 @@ export function attachOverlayPointer(
       pending = null;
       if (!current || tracking) return;
       applyIgnore(!onSolid(current));
+      applyCursor(current);
     });
   }
 
@@ -114,5 +126,6 @@ export function attachOverlayPointer(
     window.removeEventListener("click", onClick, true);
     window.removeEventListener("blur", onUp);
     host.setClickThrough(true);
+    document.documentElement.style.cursor = "";
   };
 }
