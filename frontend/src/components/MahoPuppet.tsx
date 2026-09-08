@@ -67,10 +67,10 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
         }
       },
       async playSfx(url: string) {
-        const audio = new Audio(url);
-        audio.crossOrigin = "anonymous";
+        const speech = speechRef.current;
+        if (!speech) return;
         try {
-          await audio.play();
+          await speech.play(url, { visemes: false });
         } catch {
           /* click still shows angry even if the wav fails */
         }
