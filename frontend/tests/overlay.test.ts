@@ -7,7 +7,8 @@ const css = await readFile(new URL("../src/styles.css", import.meta.url), "utf8"
 const main = await readFile(new URL("../electron/main.cjs", import.meta.url), "utf8");
 
 assert.doesNotMatch(app, /Live2DCharacter/);
-assert.match(app, /sendInteraction/);
+assert.doesNotMatch(app, /sendInteraction/);
+assert.match(app, /playSfx/);
 assert.match(app, /className="overlay"/);
 assert.match(app, /MahoPuppet/);
 assert.match(app, /speechUrl/);
@@ -20,8 +21,8 @@ assert.match(hits, /label: "Cat"/);
 assert.match(hits, /label: "Talk"/);
 assert.match(hits, /label: "Head"/);
 assert.match(hits, /\/maho\/talk\.wav/);
-assert.match(hits, /backendId: 1/);
-assert.match(hits, /backendId: 2/);
+assert.match(hits, /\/maho\/grr\.wav/);
+assert.doesNotMatch(hits, /backendId/);
 assert.match(hits, /PatReaction/);
 const speech = await readFile(new URL("../src/audio/SpeechPlayer.ts", import.meta.url), "utf8");
 assert.match(speech, /isSpeaking\(\): boolean/);

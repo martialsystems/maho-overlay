@@ -7,5 +7,6 @@ export type OverlayCharacterHandle = {
   setSleeping: (sleeping: boolean) => void;
   prepareSpeech: () => Promise<void>;
   playSpeech: (url: string) => Promise<void>;
+  playSfx: (url: string) => Promise<void>;
   stopSpeech: () => void;
 };

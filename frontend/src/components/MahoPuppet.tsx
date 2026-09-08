@@ -66,6 +66,15 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
           onBusyRef.current?.(false);
         }
       },
+      async playSfx(url: string) {
+        const audio = new Audio(url);
+        audio.crossOrigin = "anonymous";
+        try {
+          await audio.play();
+        } catch {
+          /* click still shows angry even if the wav fails */
+        }
+      },
       stopSpeech() {
         speechRef.current?.stop();
         motionRef.current.setSpeaking(false);

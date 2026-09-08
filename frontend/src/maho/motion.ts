@@ -15,7 +15,7 @@ export type MahoTexture =
 const BLINK_EVERY_MS = 3200;
 const BLINK_HOLD_MS = 90;
 const PAT_MS = 900;
-const TAP_MS = 1400;
+const TAP_MS = 800;
 
 type Clip = {
   name: "PatReaction" | "TapReaction";
@@ -53,10 +53,10 @@ export class MahoMotion {
     }
     if (group === "TapReaction") {
       this.busy = true;
-      this.angryTalking = true;
+      this.angryTalking = false;
       this.angerMark = true;
-      this.mouth = "mouth-open";
-      this.texture = "angry-mouth-open";
+      this.mouth = "idle";
+      this.texture = "angry";
       this.clip = { name: "TapReaction", elapsed: 0, duration: TAP_MS };
       return "started";
     }
@@ -126,7 +126,7 @@ export class MahoMotion {
         this.faceRot = -0.03;
         this.hairSway = 0.01;
         this.angerMark = true;
-        this.texture = this.speaking || this.angryTalking ? this.talkTexture() : "angry";
+        this.texture = "angry";
       }
       if (t >= 1) {
         this.clip = null;

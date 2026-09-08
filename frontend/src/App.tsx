@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import MahoPuppet from "./components/MahoPuppet";
 import ZzzLayer from "./components/ZzzLayer";
-import { sendInteraction } from "./api";
 import { startOverlayPointer } from "./overlayPointer";
 import { useKurisuSleep } from "./useKurisuSleep";
 import { interactions } from "./interactions";
@@ -24,6 +23,12 @@ export default function App() {
     if (busy) return;
     noteActivity();
     const interaction = interactions[name];
+    if (interaction.motion && interaction.speechUrl) {
+      const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
+      if (result !== "started") return;
+      void characterRef.current?.playSfx(interaction.speechUrl);
+      return;
+    }
     if (interaction.speechUrl) {
       const url = interaction.speechUrl;
       void characterRef.current?.prepareSpeech().then(() =>
@@ -31,24 +36,8 @@ export default function App() {
       );
       return;
     }
-    if (!interaction.backendId || !interaction.motion) return;
-    const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
-    if (result !== "started") return;
-    const speechReady = characterRef.current?.prepareSpeech().then(
-      () => true,
-      () => false,
-    );
-    setBusy(true);
-    try {
-      const reply = await sendInteraction(interaction.backendId);
-      if (reply.speechUrl && (await speechReady)) {
-        await characterRef.current?.playSpeech(reply.speechUrl);
-      }
-    } catch (error) {
-      console.error("Interaction failed:", error);
-      characterRef.current?.stopSpeech();
-      setBusy(false);
-    }
+    if (!interaction.motion) return;
+    characterRef.current?.playMotion(interaction.motion);
   }
 
   return (
