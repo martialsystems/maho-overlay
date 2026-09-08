@@ -24,6 +24,9 @@
     "angry": "/maho/maho-angry.png",
     "mouth-blank": "/maho/maho-mouth-blank.png",
     "mouth-half": "/maho/maho-mouth-half.png",
-    "mouth-open": "/maho/maho-mouth-open.png"
+    "mouth-open": "/maho/maho-mouth-open.png",
+    "angry-mouth-blank": "/maho/maho-angry-mouth-blank.png",
+    "angry-mouth-half": "/maho/maho-angry-mouth-half.png",
+    "angry-mouth-open": "/maho/maho-angry-mouth-open.png"
   }
 }

@@ -79,6 +79,34 @@ class TrainTests(unittest.TestCase):
             self.assertGreaterEqual(blob["basis"].shape[1], 1)
             self.assertIn("a", blob["embeddings"])
 
+    def test_loud_quiet_split_and_join_gaps(self):
+        from maho_energy_bands import join_gaps, max_interior_gap, punch_score, synth_text
+        from equalize_maho_clips import SR
+
+        t = np.arange(int(0.6 * SR), dtype=np.float32) / SR
+        even = (0.2 * np.sin(2 * np.pi * 220 * t)).astype(np.float32)
+        env = 0.35 + 0.65 * (0.5 + 0.5 * np.sin(2 * np.pi * 6 * t))
+        punchy = (0.25 * env * np.sin(2 * np.pi * 220 * t)).astype(np.float32)
+        self.assertGreater(punch_score(punchy), punch_score(even))
+        self.assertEqual(synth_text("やめて！離してってば！"), "やめて、離してってば。")
+        self.assertEqual(synth_text("やめて。子供じゃないんだから。"), "やめて、子供じゃないんだから。")
+
+        hop = int(0.5 * SR)
+        gap = np.zeros(int(0.7 * SR), dtype=np.float32)
+        two = np.concatenate([even, gap, even])
+        self.assertGreater(max_interior_gap(two), 0.5)
+        joined = join_gaps(two, 0.2)
+        self.assertLess(max_interior_gap(joined), 0.15)
+        self.assertGreater(joined.size / SR, 0.9)
+
+        train = (SCRIPTS / "train_maho_voice_bank.py").read_text(encoding="utf-8")
+        self.assertIn("loud", train)
+        self.assertIn("quiet", train)
+        self.assertIn("clip10_band", train)
+        build = (SCRIPTS / "build_maho_voice_dataset.py").read_text(encoding="utf-8")
+        self.assertIn("write_bands", build)
+        self.assertIn("filelist_ja_{0}", build)
+
 
 class SourceContractTests(unittest.TestCase):
     def test_no_xtts_single_clip_default(self):

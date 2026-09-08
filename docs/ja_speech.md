@@ -13,9 +13,9 @@ Japanese vowels on the slow set:
 | え | half | mouth-half |
 | う | small | mouth-half (until a small PNG exists) |
 | お | open | mouth-open |
-| ん | closed | mouth-open while speaking |
+| ん | closed | mouth-open in the JA classifier only |
 
-The closed overlay mapping is the same contract as MouthDriver silence during a line: keep the mouth open until the clip ends.
+Live overlay RMS silence (pauses and trailing quiet) uses idle. Do not map that idle to mouth-open. Clip 10 has a mid-line pause and a tail.
 
 ## Pair
 
@@ -33,11 +33,11 @@ Runtime always passes `speed_rate=1.0` (Maho's normal line). If the winner used 
 
 ```bash
 backend/.venv/bin/python scripts/predict_ja_viseme.py \
-  --wav frontend/public/maho/talk.wav \
+  --wav frontend/public/maho/head.wav \
   --speed-rate 1.0
 ```
 
-Predict only. No `fit`. The current Talk line is English (`talk.wav`, staff room). Live overlay Talk still uses MouthDriver relative RMS. Wire this track when a Japanese Maho line exists.
+Predict only. No `fit`. Live overlay Head is clip 10 (`head.wav`) with MouthDriver relative RMS. Cat stays closed-mouth SFX.
 
 ## Data
 
@@ -69,7 +69,7 @@ backend/.venv/bin/pip install -r scripts/requirements-ja-speech.txt
 backend/.venv/bin/python scripts/fetch_ja_speech.py
 backend/.venv/bin/python scripts/label_ja_vowels.py
 backend/.venv/bin/python scripts/train_ja_viseme.py
-backend/.venv/bin/python scripts/predict_ja_viseme.py --wav frontend/public/maho/talk.wav --speed-rate 1.0
+backend/.venv/bin/python scripts/predict_ja_viseme.py --wav frontend/public/maho/head.wav --speed-rate 1.0
 ```
 
 Cite the corpus you actually unpacked. JSUT is research/non-commercial. SpeedSpeech-JA-2022 is CC BY 4.0.

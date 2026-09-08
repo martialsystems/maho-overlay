@@ -23,6 +23,7 @@ export class SpeechPlayer {
   private destroyed = false;
   private generation = 0;
   private lastFrameTime = 0;
+  private emitVisemes = true;
 
   constructor(callbacks: SpeechPlayerCallbacks) {
     this.callbacks = callbacks;
@@ -33,6 +34,10 @@ export class SpeechPlayer {
     this.audio.addEventListener("error", this.handleError);
     this.audio.addEventListener("pause", this.handleEnded);
     this.audio.addEventListener("waiting", this.handleEnded);
+  }
+
+  isSpeaking(): boolean {
+    return this.speaking && !this.destroyed;
   }
 
   async prepare(): Promise<void> {
@@ -59,13 +64,15 @@ export class SpeechPlayer {
     }
   }
 
-  async play(url: string): Promise<void> {
+  async play(url: string, opts?: { visemes?: boolean }): Promise<void> {
     if (this.destroyed) return;
     this.stop();
+    this.emitVisemes = opts?.visemes !== false;
     const generation = this.generation;
     await this.prepare();
     if (this.destroyed || generation !== this.generation) return;
 
+    this.audio.volume = 1;
     this.audio.src = url;
     this.audio.load();
 
@@ -98,7 +105,7 @@ export class SpeechPlayer {
     this.speaking = true;
     this.lastFrameTime = performance.now();
     this.smoothedAmplitude = 0;
-    this.callbacks.onSpeakingChange(true);
+    if (this.emitVisemes) this.callbacks.onSpeakingChange(true);
     this.updateAmplitude();
   };
 
@@ -140,7 +147,7 @@ export class SpeechPlayer {
     this.smoothedAmplitude +=
       (target - this.smoothedAmplitude) * smoothing;
 
-    this.callbacks.onAmplitude(this.smoothedAmplitude);
+    if (this.emitVisemes) this.callbacks.onAmplitude(this.smoothedAmplitude);
     this.animationFrame = requestAnimationFrame(this.updateAmplitude);
   };
 
@@ -148,12 +155,11 @@ export class SpeechPlayer {
     cancelAnimationFrame(this.animationFrame);
     this.animationFrame = 0;
     this.smoothedAmplitude = 0;
-    this.callbacks.onAmplitude(0);
-
     if (this.speaking) {
       this.speaking = false;
-      this.callbacks.onSpeakingChange(false);
+      if (this.emitVisemes) this.callbacks.onSpeakingChange(false);
     }
+    this.callbacks.onAmplitude(0);
   }
 
   destroy(): void {

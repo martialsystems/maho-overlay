@@ -26,6 +26,7 @@ if str(SCRIPTS) not in sys.path:
 
 from equalize_maho_clips import SR, load_s16  # noqa: E402
 from maho_clip_script import NONSPEECH  # noqa: E402
+from maho_energy_bands import CLIP10, split_bands  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 BANK = ROOT / "data" / "maho_voice" / "bank"
@@ -128,6 +129,7 @@ def train_encoder(paths: list[Path]) -> dict:
         "lang": "ja",
         "ref_wav": "maho_ref_ja.wav",
         "note": "multi-clip Japanese bank; not a 10s XTTS one-shot",
+        "band": None,
     }
 
 
@@ -156,10 +158,42 @@ def main() -> int:
     ]
     if len(speech) < 20:
         raise SystemExit("need equalized speech clips first")
+    bands = split_bands(EQ)
+    by_id = {p.stem: p for p in speech}
+    loud_paths = [by_id[i] for i in bands["loud"] if i in by_id]
+    quiet_paths = [by_id[i] for i in bands["quiet"] if i in by_id]
+    if len(loud_paths) < 8 or len(quiet_paths) < 8:
+        raise SystemExit("loud {0} quiet {1}: need 8 each".format(len(loud_paths), len(quiet_paths)))
+    loud = train_encoder(loud_paths)
+    loud["band"] = "loud"
+    loud["ref_wav"] = "maho_ref_ja_loud.wav"
+    quiet = train_encoder(quiet_paths)
+    quiet["band"] = "quiet"
+    quiet["ref_wav"] = "maho_ref_ja_quiet.wav"
     blob = train_encoder(speech)
+    blob["bands"] = {"loud": loud, "quiet": quiet}
+    blob["clip10_band"] = "loud"
+    blob["loud_ids"] = bands["loud"]
+    blob["quiet_ids"] = bands["quiet"]
+    if CLIP10 not in bands["loud"]:
+        raise SystemExit("clip 10 must be in the loud band")
     MODEL.write_bytes(pickle.dumps(blob))
-    print("trained speaker bank n={0} pca={1} -> {2}".format(blob["n_speech"], blob["basis"].shape[1], MODEL))
-    report = {"encoder": str(MODEL), "n_speech": blob["n_speech"], "synths": []}
+    print(
+        "trained speaker bank n={0} loud={1} quiet={2} pca={3} -> {4}".format(
+            blob["n_speech"],
+            loud["n_speech"],
+            quiet["n_speech"],
+            blob["basis"].shape[1],
+            MODEL,
+        )
+    )
+    report = {
+        "encoder": str(MODEL),
+        "n_speech": blob["n_speech"],
+        "n_loud": loud["n_speech"],
+        "n_quiet": quiet["n_speech"],
+        "synths": [],
+    }
     if args.synth:
         ref = BANK / "maho_ref_ja.wav"
         if not ref.is_file():

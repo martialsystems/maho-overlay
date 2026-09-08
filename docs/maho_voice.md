@@ -1,6 +1,6 @@
 # Maho voice corpus
 
-Local compile of Hiyajou Maho speech for a later voice model and for Japanese viseme labels. Live Talk is still MouthDriver RMS on `talk.wav`.
+Local compile of Hiyajou Maho speech for a later voice model and for Japanese viseme labels. Live Head is MouthDriver RMS on clip 10 (`head.wav`).
 
 ## Audio chops
 

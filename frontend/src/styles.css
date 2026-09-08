@@ -63,11 +63,12 @@ button {
   border: none;
   border-radius: 12px;
   color: transparent;
-  cursor: pointer;
+  cursor: default;
 }
 
-.touch-button:disabled {
-  cursor: default;
+.touch-point,
+.touch-point:hover {
+  cursor: pointer;
 }
 
 .touch-button:focus,

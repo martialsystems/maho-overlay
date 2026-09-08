@@ -66,8 +66,19 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
           onBusyRef.current?.(false);
         }
       },
+      async playSfx(url: string) {
+        const audio = new Audio(url);
+        audio.crossOrigin = "anonymous";
+        audio.volume = 1;
+        try {
+          await audio.play();
+        } catch {
+          /* click still shows angry even if the wav fails */
+        }
+      },
       stopSpeech() {
         speechRef.current?.stop();
+        motionRef.current.setSpeaking(false);
       },
     }), []);
 
@@ -78,7 +89,9 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
       let frame = 0;
       let last = performance.now();
       const motion = motionRef.current;
-      motion.onClipEnd = () => onBusyRef.current?.(false);
+      motion.onClipEnd = () => {
+        onBusyRef.current?.(false);
+      };
       const speech = new SpeechPlayer({
         onSpeakingChange(speaking) {
           motion.setSpeaking(speaking);

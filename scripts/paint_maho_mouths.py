@@ -102,6 +102,15 @@ def paint_talk() -> None:
     write_png(paint_mouth("open", blank), "maho-mouth-open.png")
 
 
+def paint_angry_talk() -> None:
+    angry = Image.open(OUT / "maho-angry.png").convert("RGBA")
+    blank = angry.copy()
+    erase_lips(blank)
+    write_png(blank, "maho-angry-mouth-blank.png")
+    write_png(paint_mouth("half", blank), "maho-angry-mouth-half.png")
+    write_png(paint_mouth("open", blank), "maho-angry-mouth-open.png")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -113,6 +122,7 @@ def main() -> None:
     if args.rest_nose:
         bake_rest_noses()
     paint_talk()
+    paint_angry_talk()
 
 
 if __name__ == "__main__":

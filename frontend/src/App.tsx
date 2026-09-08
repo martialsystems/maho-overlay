@@ -19,11 +19,23 @@ export default function App() {
     });
   }, [noteActivity]);
 
-  function handleInteraction(name: InteractionName) {
+  async function handleInteraction(name: InteractionName) {
     if (busy) return;
     noteActivity();
     const interaction = interactions[name];
+    if (interaction.sfx && interaction.speechUrl) {
+      if (interaction.motion) {
+        const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
+        if (result !== "started") return;
+      }
+      void characterRef.current?.playSfx(interaction.speechUrl);
+      return;
+    }
     if (interaction.speechUrl) {
+      if (interaction.motion) {
+        const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
+        if (result !== "started") return;
+      }
       const url = interaction.speechUrl;
       void characterRef.current?.prepareSpeech().then(() =>
         characterRef.current?.playSpeech(url),
@@ -31,8 +43,7 @@ export default function App() {
       return;
     }
     if (!interaction.motion) return;
-    const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
-    if (result !== "started") return;
+    characterRef.current?.playMotion(interaction.motion);
   }
 
   return (
@@ -47,10 +58,9 @@ export default function App() {
             <button
               key={name}
               type="button"
-              className="touch-button"
+              className="touch-button touch-point"
               style={interaction.position}
               aria-label={interaction.label}
-              disabled={busy}
               onClick={() => handleInteraction(name)}
             >
               {interaction.label}

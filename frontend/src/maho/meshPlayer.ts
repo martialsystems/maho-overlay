@@ -118,22 +118,27 @@ export class MahoMeshPlayer {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indices, gl.STATIC_DRAW);
 
-    const idle = await loadTexture(gl, this.spec.textures.idle);
-    const closed = await loadTexture(gl, this.spec.textures["eyes-closed"]);
-    const angry = await loadTexture(gl, this.spec.textures.angry);
-    const blank = await loadTexture(gl, this.spec.textures["mouth-blank"]);
-    const half = await loadTexture(gl, this.spec.textures["mouth-half"]);
-    const open = await loadTexture(gl, this.spec.textures["mouth-open"]);
-    if (this.destroyed) {
-      for (const texture of [idle, closed, angry, blank, half, open]) gl.deleteTexture(texture);
-      return;
+    const names = [
+      "idle",
+      "eyes-closed",
+      "angry",
+      "mouth-blank",
+      "mouth-half",
+      "mouth-open",
+      "angry-mouth-blank",
+      "angry-mouth-half",
+      "angry-mouth-open",
+    ] as const;
+    const loaded: WebGLTexture[] = [];
+    for (const name of names) {
+      const texture = await loadTexture(gl, this.spec.textures[name]);
+      loaded.push(texture);
+      if (this.destroyed) {
+        for (const item of loaded) gl.deleteTexture(item);
+        return;
+      }
+      this.textures.set(name, texture);
     }
-    this.textures.set("idle", idle);
-    this.textures.set("eyes-closed", closed);
-    this.textures.set("angry", angry);
-    this.textures.set("mouth-blank", blank);
-    this.textures.set("mouth-half", half);
-    this.textures.set("mouth-open", open);
     this.ready = true;
   }
 

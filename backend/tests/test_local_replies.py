@@ -46,7 +46,7 @@ class LocalReplyTests(unittest.TestCase):
         response = self.client.post('/doSpecialInteraction', json={'interaction_value': 2})
         self.assertEqual(response.status_code, 200)
         audio_url = response.json['audio_url']
-        self.assertTrue(audio_url.startswith('/reaction_audio/kurisu_head_'))
+        self.assertTrue(audio_url.startswith('/reaction_audio/maho_'))
         audio = self.client.get(audio_url)
         self.assertEqual(audio.status_code, 200)
         self.assertTrue(audio.data.startswith(b'RIFF'))
