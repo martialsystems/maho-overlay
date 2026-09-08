@@ -71,6 +71,7 @@ for (const name of [
   "maho.png",
   "maho-eyes-closed.png",
   "maho-angry.png",
+  "maho-mouth-blank.png",
   "maho-mouth-half.png",
   "maho-mouth-open.png",
 ] as const) {
@@ -82,9 +83,11 @@ for (const name of [
 }
 
 const idlePng = await readFile(new URL("../public/maho/maho.png", import.meta.url));
+const blankPng = await readFile(new URL("../public/maho/maho-mouth-blank.png", import.meta.url));
 const halfPng = await readFile(new URL("../public/maho/maho-mouth-half.png", import.meta.url));
 const openPng = await readFile(new URL("../public/maho/maho-mouth-open.png", import.meta.url));
-assert.notEqual(Buffer.compare(idlePng, halfPng), 0);
+assert.notEqual(Buffer.compare(idlePng, blankPng), 0);
+assert.notEqual(Buffer.compare(blankPng, halfPng), 0);
 assert.notEqual(Buffer.compare(halfPng, openPng), 0);
 
 const driver = new MouthDriver();
@@ -102,6 +105,8 @@ assert.ok(talkWav.byteLength > 50_000);
 
 const talking = new MahoMotion();
 talking.setSpeaking(true);
+talking.update(0.016);
+assert.equal(talking.texture, "mouth-blank");
 talking.setMouth("mouth-open");
 talking.update(0.016);
 assert.equal(talking.texture, "mouth-open");

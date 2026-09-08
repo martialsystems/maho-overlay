@@ -22,6 +22,7 @@
     "idle": "/maho/maho.png",
     "eyes-closed": "/maho/maho-eyes-closed.png",
     "angry": "/maho/maho-angry.png",
+    "mouth-blank": "/maho/maho-mouth-blank.png",
     "mouth-half": "/maho/maho-mouth-half.png",
     "mouth-open": "/maho/maho-mouth-open.png"
   }

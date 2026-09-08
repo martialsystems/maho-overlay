@@ -1,7 +1,7 @@
 import type { PlayMotionResult } from "../overlayCharacter";
 import type { MouthViseme } from "./viseme";
 
-export type MahoTexture = "idle" | "eyes-closed" | "angry" | "mouth-half" | "mouth-open";
+export type MahoTexture = "idle" | "eyes-closed" | "angry" | "mouth-blank" | "mouth-half" | "mouth-open";
 
 const BLINK_EVERY_MS = 3200;
 const BLINK_HOLD_MS = 90;
@@ -118,7 +118,7 @@ export class MahoMotion {
     }
 
     if (this.speaking) {
-      this.texture = this.mouth === "idle" ? "idle" : this.mouth;
+      this.texture = this.mouth === "idle" ? "mouth-blank" : this.mouth;
       return;
     }
 

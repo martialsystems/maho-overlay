@@ -2,20 +2,21 @@
 # Copyright (c) 2026 Martial Systems LLC. MIT.
 """Paint talk visemes onto the overlay still.
 
-Idle closed lips are about 53px wide. Talk mouths are wider than that.
-The nose mark is copied 10px up so the bigger opening does not cover it.
-Lip stroke is 2px, uniform. Face fill uses the still, not a flat patch.
+The raised nose lives on the rest stills (idle, eyes-closed, angry), not on
+talk frames. Talking uses a skin-only mouth with no lip line, then half/open
+on that blank. Lip stroke is 2px, uniform.
 """
 
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "frontend/public/maho/maho.png"
 OUT = ROOT / "frontend/public/maho"
+IDLE = OUT / "maho.png"
 
 STROKE = (110, 70, 64, 255)
 INNER_HALF = (198, 112, 108, 255)
@@ -27,6 +28,7 @@ NOSE_SHIFT = 10
 SCALE = 4
 HALF_RX, HALF_RY = 36, 13
 OPEN_RX, OPEN_RY = 38, 24
+REST = ("maho.png", "maho-eyes-closed.png", "maho-angry.png")
 
 
 def shift_nose(img: Image.Image) -> None:
@@ -38,12 +40,14 @@ def shift_nose(img: Image.Image) -> None:
     img.paste(crop, (left, top - NOSE_SHIFT))
 
 
-def paint(kind: str, base: Image.Image) -> Image.Image:
-    out = base.copy()
-    shift_nose(out)
+def erase_lips(img: Image.Image) -> None:
+    skin = img.getpixel((644, 748))
+    ImageDraw.Draw(img).ellipse([600, 750, 688, 778], fill=skin)
+
+
+def paint_mouth(kind: str, blank: Image.Image) -> Image.Image:
+    out = blank.copy()
     left, top, right, bottom = BOX
-    skin = out.getpixel((644, 748))
-    ImageDraw.Draw(out).ellipse([608, 754, 680, 774], fill=skin)
     face = out.crop((left, top, right, bottom))
     hi = face.resize((face.width * SCALE, face.height * SCALE), Image.Resampling.NEAREST)
     draw = ImageDraw.Draw(hi)
@@ -75,13 +79,40 @@ def paint(kind: str, base: Image.Image) -> Image.Image:
     return out
 
 
+def write_png(im: Image.Image, name: str) -> None:
+    if im.size != (1264, 1568):
+        raise SystemExit("size {0} for {1}".format(im.size, name))
+    im.save(OUT / name, "PNG")
+
+
+def bake_rest_noses() -> None:
+    for name in REST:
+        path = OUT / name
+        im = Image.open(path).convert("RGBA")
+        shift_nose(im)
+        write_png(im, name)
+
+
+def paint_talk() -> None:
+    idle = Image.open(IDLE).convert("RGBA")
+    blank = idle.copy()
+    erase_lips(blank)
+    write_png(blank, "maho-mouth-blank.png")
+    write_png(paint_mouth("half", blank), "maho-mouth-half.png")
+    write_png(paint_mouth("open", blank), "maho-mouth-open.png")
+
+
 def main() -> None:
-    base = Image.open(SRC).convert("RGBA")
-    for kind, name in (("half", "maho-mouth-half.png"), ("open", "maho-mouth-open.png")):
-        im = paint(kind, base)
-        if im.size != (1264, 1568):
-            raise SystemExit("size {0}".format(im.size))
-        im.save(OUT / name, "PNG")
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--rest-nose",
+        action="store_true",
+        help="Shift the nose up on idle, eyes-closed, and angry. Run once.",
+    )
+    args = parser.parse_args()
+    if args.rest_nose:
+        bake_rest_noses()
+    paint_talk()
 
 
 if __name__ == "__main__":
