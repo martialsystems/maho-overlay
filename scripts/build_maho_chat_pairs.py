@@ -3,7 +3,8 @@
 """Build cue → Maho reply pairs from the SG0 transcript dump.
 
 A cue is the previous named speaker. Narration is skipped. Solo Maho only.
-Does not call an LLM. Does not extract audio.
+Drops the SG0_00_02 opener where Okabe takes her for a middle-schooler.
+Does not call an LLM. Does not extract audio. Does not scan maho_clips.
 """
 
 from __future__ import annotations
@@ -58,6 +59,20 @@ def is_science(text: str) -> bool:
     return any(tok in low for tok in SCIENCE)
 
 
+def kid_mistake_over(cue: str, response: str) -> bool:
+    blob = f"{cue} {response}".lower()
+    return any(
+        tok in blob
+        for tok in (
+            "lecture today",
+            "artificial intelligence",
+            "i'm here as an assistant",
+            "i’m here as an assistant",
+            "translator",
+        )
+    )
+
+
 def build_pairs(src: Path, ja_map: dict[str, str]) -> list[dict]:
     rows: list[dict] = []
     seen_files = set()
@@ -69,6 +84,7 @@ def build_pairs(src: Path, ja_map: dict[str, str]) -> list[dict]:
         scene = path.name.replace(".scx.txt", "").replace(".txt", "")
         prev: tuple[str, str] | None = None
         n = 0
+        skip_kid_gag = scene == "SG0_00_02"
         for name, text in iter_named_lines(path):
             if name in SKIP:
                 prev = None
@@ -76,8 +92,14 @@ def build_pairs(src: Path, ja_map: dict[str, str]) -> list[dict]:
             body = unwrap_thought(text)
             if name in SOLO:
                 if prev is not None and prev[0] not in SOLO and body and not is_ellipsis(body):
-                    n += 1
                     cue, speaker = prev[1], prev[0]
+                    if skip_kid_gag:
+                        if kid_mistake_over(cue, body):
+                            skip_kid_gag = False
+                        else:
+                            prev = (name, body)
+                            continue
+                    n += 1
                     rows.append(
                         {
                             "id": "{0}_p{1:04d}".format(scene, n),

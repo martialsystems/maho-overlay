@@ -52,6 +52,29 @@ class PairTests(unittest.TestCase):
             self.assertTrue(is_science("cortical memory digital data"))
             self.assertFalse(is_science("Want some coffee?"))
 
+    def test_drops_opening_kid_mistake_clip(self):
+        gag = """\
+[name]Rintaro[line]“Um... and you’re from Viktor Chondria University Middle School?”[%p]
+[name]Maho[line]“Stop messing around. Universities don’t have middle schools.”[%p]
+[name]Rintaro[line]“...You’re 21 years old?”[%p]
+[name]Maho[line]“In other words, I’m an adult woman.”[%p]
+[name]Rintaro[line]“Are you giving the lecture today?”[%p]
+[name]Maho[line]“No. I’m here as an assistant. Oh, and translator, too.”[%p]
+[name]Rintaro[line]“The topic is ‘The Artificial Intelligence Revolution,’ huh?”[%p]
+[name]Maho[line]“If you’ve got the time, I’d love for you to come listen.”[%p]
+"""
+        with tempfile.TemporaryDirectory() as raw:
+            src = Path(raw)
+            (src / "SG0_00_02.scx.txt").write_text(gag, encoding="utf-8")
+            (src / "SG0_X.scx.txt").write_text(FIXTURE, encoding="utf-8")
+            rows = build_pairs(src, {})
+            texts = [r["response"] for r in rows]
+            self.assertNotIn("Stop messing around. Universities don’t have middle schools.", texts)
+            self.assertNotIn("In other words, I’m an adult woman.", texts)
+            self.assertIn("No. I’m here as an assistant. Oh, and translator, too.", texts)
+            self.assertIn("If you’ve got the time, I’d love for you to come listen.", texts)
+            self.assertIn("Thanks. I’ll take it.", texts)
+
 
 class TrainRetrieveTests(unittest.TestCase):
     def test_science_and_chat_retrieve(self):

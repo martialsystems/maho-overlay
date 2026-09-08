@@ -13,7 +13,7 @@ backend/.venv/bin/python scripts/index_time_travel_physics.py
 backend/.venv/bin/python scripts/train_maho_retriever.py
 ```
 
-Pairs and the pickle stay under gitignored `data/maho_voice/`. Current fit: 1,366 SG0 pairs (328 science, 1,038 chat) plus 7 coursework notes (brain, Amadeus/AI, skeptical GR).
+Pairs and the pickle stay under gitignored `data/maho_voice/`. The convention opener where Okabe takes her for a middle-schooler is dropped and is not in the fit. Audio chops: wait until they are ready; do not scan for them.
 
 ## Talk
 
