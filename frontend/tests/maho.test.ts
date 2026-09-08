@@ -142,7 +142,7 @@ assert.equal(motion.texture, "eyes-closed");
 const app = await readFile(new URL("../src/App.tsx", import.meta.url), "utf8");
 assert.match(app, /MahoPuppet/);
 assert.doesNotMatch(app, /Live2DCharacter/);
-assert.match(app, /sendInteraction/);
+assert.doesNotMatch(app, /sendInteraction/);
 
 const playerSrc = await readFile(new URL("../src/maho/meshPlayer.ts", import.meta.url), "utf8");
 assert.match(playerSrc, /const zoom = 0\.9/);
@@ -161,10 +161,8 @@ assert.doesNotMatch(
 const hits = await readFile(new URL("../src/interactions.ts", import.meta.url), "utf8");
 assert.match(hits, /top: "72%"/);
 assert.match(hits, /label: "Cat"/);
-assert.match(hits, /label: "Head"/);
-assert.match(hits, /label: "Talk"/);
-assert.match(hits, /PatReaction/);
-assert.match(hits, /\/maho\/talk\.wav/);
+assert.doesNotMatch(hits, /Head Pat/);
+assert.doesNotMatch(hits, /\bhead\b/);
 assert.match(puppetSrc, /MahoMeshPlayer/);
 assert.doesNotMatch(puppetSrc, /MahoLayerPlayer/);
 assert.doesNotMatch(puppetSrc, /layers\.json/);

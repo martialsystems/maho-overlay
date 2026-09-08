@@ -1,21 +1,7 @@
 /** Hit boxes. Motion names match MahoMotion.play. */
-export type Interaction = {
-  backendId?: number;
-  motion: string;
-  label: string;
-  speechUrl?: string;
-  position: { top: string; left: string; width: string; height: string };
-};
-
-export const interactions: Record<string, Interaction> = {
-  head: {
-    backendId: 2,
-    motion: "PatReaction",
-    label: "Head",
-    // Hair and crown. Mouth and eyes stay out of this box.
-    position: { top: "14%", left: "50%", width: "28%", height: "12%" },
-  },
+export const interactions = {
   talk: {
+    backendId: 2,
     motion: "",
     label: "Talk",
     speechUrl: "/maho/talk.wav",
@@ -31,4 +17,4 @@ export const interactions: Record<string, Interaction> = {
   },
 };
 
-export type InteractionName = "head" | "talk" | "special";
+export type InteractionName = keyof typeof interactions;

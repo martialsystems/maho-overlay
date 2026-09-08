@@ -21,7 +21,6 @@ if str(SCRIPTS) not in sys.path:
 
 from equalize_maho_clips import SR, load_s16, write_s16  # noqa: E402
 from maho_clip_script import LINES, NONSPEECH  # noqa: E402
-from maho_energy_bands import write_bands  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 EQ = ROOT / "data" / "maho_voice" / "bank" / "equalized"
@@ -89,27 +88,13 @@ def main() -> int:
     (BANK / "filelist_ja.txt").write_text("\n".join(filelist) + "\n", encoding="utf-8")
     ref = concat_speech(BANK / "maho_ref_ja.wav")
     concat_speech(BANK / "maho_ref_ja_b.wav", reverse=True)
-    bands = write_bands(EQ, BANK)
-    by_id = {r["id"]: r for r in recs}
-    for band_name in ("loud", "quiet"):
-        lines = []
-        for cid in bands[band_name]:
-            r = by_id.get(cid)
-            if not r or r["nonspeech"] or not r["wav"]:
-                continue
-            lines.append("{0}|maho_{1}|ja|{2}".format(BANK / r["wav"], band_name, r["ja"]))
-        (BANK / "filelist_ja_{0}.txt".format(band_name)).write_text("\n".join(lines) + "\n", encoding="utf-8")
-    loud_n = len(bands["loud"])
-    quiet_n = len(bands["quiet"])
     with wave.open(str(ref), "rb") as w:
         dur = w.getnframes() / float(w.getframerate())
     print(
-        "manifest {0} speech {1} ref {2:.1f}s loud {3} quiet {4} -> {5}".format(
+        "manifest {0} speech {1} ref {2:.1f}s -> {3}".format(
             len(recs),
             sum(1 for r in recs if not r["nonspeech"]),
             dur,
-            loud_n,
-            quiet_n,
             man,
         )
     )

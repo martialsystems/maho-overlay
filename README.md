@@ -7,8 +7,7 @@ MIT for the software. Character art keeps its own terms: see [NOTICE](NOTICE).
 ## Use it
 
 - Talk: she speaks a short line. Mouth follows the audio.
-- Cat: she gets mad, a vein mark pops on her hair, and she snaps in Japanese.
-- Head: she tells you she is not a kid, in Japanese.
+- Cat: she gets mad, and a vein mark pops on her hair. No sound yet.
 - Drag: grab her anywhere and move the window. A short click on the cat still fires.
 - 45 seconds with no click: eyes close, `z`s over her head
 - Click again: she wakes

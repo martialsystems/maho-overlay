@@ -35,10 +35,6 @@ export class SpeechPlayer {
     this.audio.addEventListener("waiting", this.handleEnded);
   }
 
-  isSpeaking(): boolean {
-    return this.speaking && !this.destroyed;
-  }
-
   async prepare(): Promise<void> {
     if (this.destroyed) return;
 

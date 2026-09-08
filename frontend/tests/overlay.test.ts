@@ -7,7 +7,7 @@ const css = await readFile(new URL("../src/styles.css", import.meta.url), "utf8"
 const main = await readFile(new URL("../electron/main.cjs", import.meta.url), "utf8");
 
 assert.doesNotMatch(app, /Live2DCharacter/);
-assert.match(app, /sendInteraction/);
+assert.doesNotMatch(app, /sendInteraction/);
 assert.match(app, /className="overlay"/);
 assert.match(app, /MahoPuppet/);
 assert.match(app, /speechUrl/);
@@ -18,15 +18,9 @@ assert.match(pointer, /suppressClick/);
 const hits = await readFile(new URL("../src/interactions.ts", import.meta.url), "utf8");
 assert.match(hits, /label: "Cat"/);
 assert.match(hits, /label: "Talk"/);
-assert.match(hits, /label: "Head"/);
 assert.match(hits, /\/maho\/talk\.wav/);
-assert.match(hits, /backendId: 1/);
-assert.match(hits, /backendId: 2/);
-assert.match(hits, /PatReaction/);
-const speech = await readFile(new URL("../src/audio/SpeechPlayer.ts", import.meta.url), "utf8");
-assert.match(speech, /isSpeaking\(\): boolean/);
-const puppet = await readFile(new URL("../src/components/MahoPuppet.tsx", import.meta.url), "utf8");
-assert.match(puppet, /isSpeaking\(\)/);
+assert.doesNotMatch(hits, /Head Pat/);
+assert.doesNotMatch(hits, /\bhead\b/);
 assert.match(app, /ZzzLayer/);
 assert.match(css, /\.anger-mark/);
 assert.match(css, /font-size: calc\(100vw \/ 56\)/);
@@ -75,9 +69,9 @@ assert.match(rootReadme, /py -3\.12/);
 assert.match(rootReadme, /martialsystems\/maho-overlay/);
 assert.doesNotMatch(rootReadme, /\u2014/);
 assert.doesNotMatch(rootReadme, /What it is not/);
+assert.doesNotMatch(rootReadme, /Click her head/);
 assert.match(rootReadme, /Click the cat/);
 assert.match(rootReadme, /Talk:/);
-assert.match(rootReadme, /Head:/);
 assert.match(rootReadme, /Small, Medium, Large, XL/);
 assert.match(rootReadme, /1264×1568 PNG/);
 
