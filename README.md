@@ -61,6 +61,7 @@ Same start later: double-click `start_local.bat` or `start_windows.bat`.
 | `start_local.command` | Starts the overlay on a Mac |
 | `start_local.bat` | Starts the overlay on Windows |
 | `docs/ja_speech.md` | Slow+normal Japanese viseme pool (offline) |
+| `docs/maho_voice.md` | Maho EN+JA script compile (offline) |
 | [LICENSE](LICENSE) | MIT for our software |
 | [NOTICE](NOTICE) | Character art terms |
 
