@@ -60,7 +60,12 @@ export class MahoMotion {
 
   setSpeaking(speaking: boolean): void {
     this.speaking = speaking;
-    if (!speaking) this.mouth = "idle";
+    if (speaking) {
+      this.mouth = "mouth-open";
+      this.texture = "mouth-open";
+    } else {
+      this.mouth = "idle";
+    }
   }
 
   setMouth(mouth: MouthViseme): void {
@@ -118,7 +123,7 @@ export class MahoMotion {
     }
 
     if (this.speaking) {
-      this.texture = this.mouth === "idle" ? "mouth-blank" : this.mouth;
+      this.texture = this.mouth === "idle" ? "mouth-open" : this.mouth;
       return;
     }
 

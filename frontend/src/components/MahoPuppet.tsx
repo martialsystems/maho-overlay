@@ -58,9 +58,11 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
         if (!speech) return;
         onBusyRef.current?.(true);
         mouthRef.current.reset();
+        motionRef.current.setSpeaking(true);
         try {
           await speech.play(url);
         } catch {
+          motionRef.current.setSpeaking(false);
           onBusyRef.current?.(false);
         }
       },
