@@ -14,6 +14,7 @@ if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
 from build_maho_chat_pairs import build_pairs, is_science  # noqa: E402
+from index_time_travel_physics import chunk_markdown  # noqa: E402
 from retrieve_maho import retrieve  # noqa: E402
 from train_maho_retriever import train  # noqa: E402
 
@@ -94,10 +95,54 @@ class TrainRetrieveTests(unittest.TestCase):
             self.assertEqual(chat[0]["kind"], "chat")
             self.assertIn("coffee", chat[0]["cue"].lower())
 
+    def test_time_travel_notes_beat_show_lore(self):
+        notes = chunk_markdown((ROOT / "docs" / "maho_science.md").read_text(encoding="utf-8"))
+        self.assertTrue(any(r["kind"].startswith("notes") for r in notes))
+        rows = [
+            {
+                "id": "show",
+                "scene": "s",
+                "cue_speaker": "Rintaro",
+                "cue": "The world line changed again.",
+                "response": "Reading Steiner. You felt it.",
+                "response_ja": "",
+                "kind": "science",
+            },
+            {
+                "id": "chat",
+                "scene": "s",
+                "cue_speaker": "Mayuri",
+                "cue": "Want some coffee?",
+                "response": "Thanks. I’ll take it.",
+                "response_ja": "",
+                "kind": "chat",
+            },
+        ] + notes
+        blob = train(rows)
+        with tempfile.TemporaryDirectory() as raw:
+            model = Path(raw) / "m.pkl"
+            model.write_bytes(pickle.dumps(blob))
+            hits = retrieve(
+                "Could a wormhole closed timelike curve send me to the past? Hawking chronology",
+                k=3,
+                model_path=model,
+            )
+            self.assertTrue(hits)
+            self.assertTrue(hits[0]["kind"].startswith("notes"))
+            joined = " ".join(h["response"] for h in hits)
+            self.assertTrue("chronology" in joined.lower() or "exotic" in joined.lower() or "CTC" in joined)
+            short = retrieve("Could a wormhole send me to the past?", k=3, model_path=model)
+            self.assertTrue(short[0]["kind"].startswith("notes"))
+
 
 class SourceContractTests(unittest.TestCase):
     def test_no_llama_in_retriever(self):
-        for name in ("train_maho_retriever.py", "retrieve_maho.py", "build_maho_chat_pairs.py"):
+        for name in (
+            "train_maho_retriever.py",
+            "retrieve_maho.py",
+            "build_maho_chat_pairs.py",
+            "index_time_travel_physics.py",
+        ):
             src = (SCRIPTS / name).read_text(encoding="utf-8")
             self.assertNotIn("llama", src.lower())
             self.assertNotIn("demucs", src.lower())
@@ -107,6 +152,12 @@ class SourceContractTests(unittest.TestCase):
         self.assertNotIn("\u2014", docs)
         self.assertNotIn("What it is not", docs)
         self.assertIn("Grok subagent", docs)
+        science = (ROOT / "docs" / "maho_science.md").read_text(encoding="utf-8")
+        self.assertNotIn("\u2014", science)
+        self.assertNotIn("What it is not", science)
+        self.assertIn("Brain Science Institute", science)
+        self.assertIn("Leskinen", science)
+        self.assertIn("skeptic", science.lower())
 
 
 if __name__ == "__main__":

@@ -9,10 +9,11 @@ Training is a TF-IDF nearest-neighbour fit on SG0 cue→Maho pairs (CPU, small).
 ```bash
 backend/.venv/bin/python scripts/build_maho_chat_pairs.py \
   --src ~/Documents/SG0\ Transcript
+backend/.venv/bin/python scripts/index_time_travel_physics.py
 backend/.venv/bin/python scripts/train_maho_retriever.py
 ```
 
-Pairs and the pickle stay under gitignored `data/maho_voice/`. Current fit: 1,366 pairs (328 science, 1,038 chat).
+Pairs and the pickle stay under gitignored `data/maho_voice/`. Current fit: 1,366 SG0 pairs (328 science, 1,038 chat) plus 7 coursework notes (brain, Amadeus/AI, skeptical GR).
 
 ## Talk
 
@@ -23,6 +24,8 @@ backend/.venv/bin/python scripts/retrieve_maho.py \
   --query "how does Amadeus store memory" --k 8
 ```
 
-Science questions should surface `kind: science` pairs. Coffee and small talk should surface `kind: chat`.
+SG0 lab talk surfaces `kind: science`. Coffee surfaces `kind: chat`. Real time travel, memory, or Amadeus-as-AI should surface `kind` starting with `notes` from `docs/maho_science.md` (brain science first, GR as a skeptic).
+
+She is Leskinen’s graduate student: memory and AI are home turf. Time travel she knows and doubts.
 
 Llama / GGUF is a later swap when the box has RAM. Do not load one here.
