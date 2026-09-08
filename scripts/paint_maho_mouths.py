@@ -2,8 +2,9 @@
 # Copyright (c) 2026 Martial Systems LLC. MIT.
 """Paint talk visemes onto the overlay still.
 
-Keeps the original nose pixels. Lip stroke is 2px, uniform, not bold.
-Face fill is the model skin #f0dacc.
+Idle closed lips are about 53px wide. Talk mouths are wider than that.
+The nose mark is copied 10px up so the bigger opening does not cover it.
+Lip stroke is 2px, uniform. Face fill uses the still, not a flat patch.
 """
 
 from __future__ import annotations
@@ -16,38 +17,61 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "frontend/public/maho/maho.png"
 OUT = ROOT / "frontend/public/maho"
 
-SKIN = (240, 218, 204, 255)
 STROKE = (110, 70, 64, 255)
 INNER_HALF = (198, 112, 108, 255)
 INNER_OPEN = (56, 26, 28, 255)
 TONGUE = (188, 90, 86, 255)
-BOX = (590, 744, 698, 792)
+BOX = (580, 728, 710, 812)
+NOSE_BOX = (628, 708, 656, 734)
+NOSE_SHIFT = 10
 SCALE = 4
+HALF_RX, HALF_RY = 36, 13
+OPEN_RX, OPEN_RY = 38, 24
+
+
+def shift_nose(img: Image.Image) -> None:
+    left, top, right, bottom = NOSE_BOX
+    crop = img.crop((left, top, right, bottom))
+    for y in range(top, bottom):
+        for x in range(left, right):
+            img.putpixel((x, y), img.getpixel((x, top - 1)))
+    img.paste(crop, (left, top - NOSE_SHIFT))
 
 
 def paint(kind: str, base: Image.Image) -> Image.Image:
     out = base.copy()
+    shift_nose(out)
     left, top, right, bottom = BOX
-    patch = Image.new("RGBA", ((right - left) * SCALE, (bottom - top) * SCALE), SKIN)
-    draw = ImageDraw.Draw(patch)
+    skin = out.getpixel((644, 748))
+    ImageDraw.Draw(out).ellipse([608, 754, 680, 774], fill=skin)
+    face = out.crop((left, top, right, bottom))
+    hi = face.resize((face.width * SCALE, face.height * SCALE), Image.Resampling.NEAREST)
+    draw = ImageDraw.Draw(hi)
     cx = (644 - left) * SCALE
-    cy = (764 - top) * SCALE
+    cy = (768 - top) * SCALE
     if kind == "half":
-        rx, ry = 26 * SCALE, 9 * SCALE
-    else:
-        rx, ry = 24 * SCALE, 17 * SCALE
-    if kind == "half":
+        rx, ry = HALF_RX * SCALE, HALF_RY * SCALE
         draw.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], fill=INNER_HALF)
     else:
+        rx, ry = OPEN_RX * SCALE, OPEN_RY * SCALE
         draw.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], fill=INNER_OPEN)
-        # Tongue fills the lower two thirds, like the staff-room still.
         draw.ellipse(
-            [cx - rx + 3 * SCALE, cy - ry // 6, cx + rx - 3 * SCALE, cy + ry - 2 * SCALE],
+            [cx - rx + 4 * SCALE, cy - ry // 8, cx + rx - 4 * SCALE, cy + ry - 2 * SCALE],
             fill=TONGUE,
         )
     draw.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], outline=STROKE, width=2 * SCALE)
-    small = patch.resize((right - left, bottom - top), Image.Resampling.LANCZOS)
-    out.paste(small, (left, top))
+    lo = hi.resize(face.size, Image.Resampling.LANCZOS)
+    mask = Image.new("L", face.size, 0)
+    ImageDraw.Draw(mask).ellipse(
+        [
+            644 - left - rx // SCALE - 3,
+            768 - top - ry // SCALE - 3,
+            644 - left + rx // SCALE + 3,
+            768 - top + ry // SCALE + 3,
+        ],
+        fill=255,
+    )
+    out.paste(lo, (left, top), mask)
     return out
 
 
