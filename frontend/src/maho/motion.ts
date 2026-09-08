@@ -1,6 +1,7 @@
 import type { PlayMotionResult } from "../overlayCharacter";
+import type { MouthViseme } from "./viseme";
 
-export type MahoTexture = "idle" | "eyes-closed" | "angry";
+export type MahoTexture = "idle" | "eyes-closed" | "angry" | "mouth-half" | "mouth-open";
 
 const BLINK_EVERY_MS = 3200;
 const BLINK_HOLD_MS = 90;
@@ -24,6 +25,8 @@ export class MahoMotion {
   armBob = 0;
   plushBob = 0;
   shakeX = 0;
+  speaking = false;
+  mouth: MouthViseme = "idle";
   onClipEnd: (() => void) | null = null;
 
   private time = 0;
@@ -53,6 +56,15 @@ export class MahoMotion {
     if (sleeping && this.clip?.name !== "TapReaction") {
       this.texture = "eyes-closed";
     }
+  }
+
+  setSpeaking(speaking: boolean): void {
+    this.speaking = speaking;
+    if (!speaking) this.mouth = "idle";
+  }
+
+  setMouth(mouth: MouthViseme): void {
+    this.mouth = mouth;
   }
 
   update(deltaSeconds: number): void {
@@ -102,6 +114,11 @@ export class MahoMotion {
 
     if (this.sleeping) {
       this.texture = "eyes-closed";
+      return;
+    }
+
+    if (this.speaking) {
+      this.texture = this.mouth === "idle" ? "idle" : this.mouth;
       return;
     }
 

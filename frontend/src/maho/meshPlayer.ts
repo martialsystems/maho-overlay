@@ -121,15 +121,17 @@ export class MahoMeshPlayer {
     const idle = await loadTexture(gl, this.spec.textures.idle);
     const closed = await loadTexture(gl, this.spec.textures["eyes-closed"]);
     const angry = await loadTexture(gl, this.spec.textures.angry);
+    const half = await loadTexture(gl, this.spec.textures["mouth-half"]);
+    const open = await loadTexture(gl, this.spec.textures["mouth-open"]);
     if (this.destroyed) {
-      gl.deleteTexture(idle);
-      gl.deleteTexture(closed);
-      gl.deleteTexture(angry);
+      for (const texture of [idle, closed, angry, half, open]) gl.deleteTexture(texture);
       return;
     }
     this.textures.set("idle", idle);
     this.textures.set("eyes-closed", closed);
     this.textures.set("angry", angry);
+    this.textures.set("mouth-half", half);
+    this.textures.set("mouth-open", open);
     this.ready = true;
   }
 

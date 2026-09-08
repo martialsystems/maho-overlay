@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { buildGridMesh, groupIndexAt, skinVertices } from "../src/maho/buildMesh";
 import type { MeshSpec } from "../src/maho/buildMesh";
 import { MahoMotion } from "../src/maho/motion";
+import { MouthDriver, MOUTH_HALF, MOUTH_OPEN } from "../src/maho/viseme";
 
 function pngSize(bytes: Uint8Array): { width: number; height: number } {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -66,13 +67,50 @@ assert.doesNotMatch(
   /LINE_STRIP|LINES\b/,
 );
 
-for (const name of ["maho.png", "maho-eyes-closed.png", "maho-angry.png"] as const) {
+for (const name of [
+  "maho.png",
+  "maho-eyes-closed.png",
+  "maho-angry.png",
+  "maho-mouth-half.png",
+  "maho-mouth-open.png",
+] as const) {
   const bytes = await readFile(new URL(`../public/maho/${name}`, import.meta.url));
   assert.equal(bytes[0], 0x89);
   const size = pngSize(bytes);
   assert.equal(size.width, 1264, name);
   assert.equal(size.height, 1568, name);
 }
+
+const idlePng = await readFile(new URL("../public/maho/maho.png", import.meta.url));
+const halfPng = await readFile(new URL("../public/maho/maho-mouth-half.png", import.meta.url));
+const openPng = await readFile(new URL("../public/maho/maho-mouth-open.png", import.meta.url));
+assert.notEqual(Buffer.compare(idlePng, halfPng), 0);
+assert.notEqual(Buffer.compare(halfPng, openPng), 0);
+
+const driver = new MouthDriver();
+assert.equal(driver.viseme(0), "idle");
+driver.reset();
+assert.equal(driver.viseme(1), "mouth-open");
+driver.reset();
+driver.peak = 1;
+assert.equal(driver.viseme(MOUTH_HALF), "mouth-half");
+assert.equal(driver.viseme(MOUTH_OPEN), "mouth-open");
+
+const talkWav = await readFile(new URL("../public/maho/talk.wav", import.meta.url));
+assert.ok(talkWav.subarray(0, 4).toString("ascii") === "RIFF");
+assert.ok(talkWav.byteLength > 50_000);
+
+const talking = new MahoMotion();
+talking.setSpeaking(true);
+talking.setMouth("mouth-open");
+talking.update(0.016);
+assert.equal(talking.texture, "mouth-open");
+talking.setMouth("mouth-half");
+talking.update(0.016);
+assert.equal(talking.texture, "mouth-half");
+talking.setSpeaking(false);
+talking.update(0.016);
+assert.equal(talking.texture, "idle");
 
 const motion = new MahoMotion();
 assert.equal(motion.play("TapReaction"), "started");

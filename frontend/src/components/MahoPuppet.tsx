@@ -8,8 +8,10 @@ import {
 
 import type { OverlayCharacterHandle } from "../overlayCharacter";
 import type { MeshSpec } from "../maho/buildMesh";
+import { SpeechPlayer } from "../audio/SpeechPlayer";
 import { MahoMeshPlayer } from "../maho/meshPlayer";
 import { MahoMotion } from "../maho/motion";
+import { MouthDriver } from "../maho/viseme";
 
 type Props = {
   onBusyChange?: (busy: boolean) => void;
@@ -20,6 +22,8 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const motionRef = useRef(new MahoMotion());
     const playerRef = useRef<MahoMeshPlayer | null>(null);
+    const speechRef = useRef<SpeechPlayer | null>(null);
+    const mouthRef = useRef(new MouthDriver());
     const onBusyRef = useRef(onBusyChange);
     const angerRef = useRef(false);
     const [anger, setAnger] = useState(false);
@@ -43,11 +47,26 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
         return player.hitTest(x, y);
       },
       setSleeping(sleeping: boolean) {
+        if (sleeping) speechRef.current?.stop();
         motionRef.current.setSleeping(sleeping);
       },
-      async prepareSpeech() {},
-      async playSpeech() {},
-      stopSpeech() {},
+      async prepareSpeech() {
+        await speechRef.current?.prepare();
+      },
+      async playSpeech(url: string) {
+        const speech = speechRef.current;
+        if (!speech) return;
+        onBusyRef.current?.(true);
+        mouthRef.current.reset();
+        try {
+          await speech.play(url);
+        } catch {
+          onBusyRef.current?.(false);
+        }
+      },
+      stopSpeech() {
+        speechRef.current?.stop();
+      },
     }), []);
 
     useEffect(() => {
@@ -58,6 +77,19 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
       let last = performance.now();
       const motion = motionRef.current;
       motion.onClipEnd = () => onBusyRef.current?.(false);
+      const speech = new SpeechPlayer({
+        onSpeakingChange(speaking) {
+          motion.setSpeaking(speaking);
+          if (!speaking) {
+            mouthRef.current.reset();
+            onBusyRef.current?.(false);
+          }
+        },
+        onAmplitude(value) {
+          motion.setMouth(mouthRef.current.viseme(value));
+        },
+      });
+      speechRef.current = speech;
 
       const gl = canvas.getContext("webgl2", {
         alpha: true,
@@ -65,7 +97,11 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
         antialias: false,
         preserveDrawingBuffer: true,
       });
-      if (!gl) return;
+      if (!gl) {
+        speech.destroy();
+        speechRef.current = null;
+        return;
+      }
 
       const resize = () => {
         const rect = canvas.getBoundingClientRect();
@@ -128,6 +164,8 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
         cancelAnimationFrame(frame);
         observer.disconnect();
         motion.onClipEnd = null;
+        speech.destroy();
+        speechRef.current = null;
         playerRef.current = null;
         player?.destroy();
       };

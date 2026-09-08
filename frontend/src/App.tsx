@@ -23,6 +23,14 @@ export default function App() {
     if (busy) return;
     noteActivity();
     const interaction = interactions[name];
+    if (interaction.speechUrl) {
+      const url = interaction.speechUrl;
+      void characterRef.current?.prepareSpeech().then(() =>
+        characterRef.current?.playSpeech(url),
+      );
+      return;
+    }
+    if (!interaction.motion) return;
     const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
     if (result !== "started") return;
   }
