@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martial Systems LLC. MIT.
-"""Bake Japanese cat/head reaction WAVs from the Maho speaker bank.
+"""Bake Japanese cat/head reaction WAVs from the loud Maho bank.
 
 Uses the equalized clip for the one line that is already in the bank
-(馬鹿にしないで). Other lines are XTTS ja on the cleanest recorded takes
-(low temperature, several speaker wavs), then spectral-matched to clip 10
-so the vocoder hiss does not ship.
+(馬鹿にしないで). Other lines are XTTS ja on the loud band (clip 10 first),
+one utterance, gaps joined, then hiss-shelved toward clip 10.
 """
 
 from __future__ import annotations
@@ -37,6 +36,7 @@ from equalize_maho_clips import (  # noqa: E402
     load_s16,
     write_s16,
 )
+from maho_energy_bands import join_gaps, loud_ref_wavs, max_interior_gap, synth_text  # noqa: E402
 from train_maho_voice_bank import artifacted, clip_stats  # noqa: E402
 
 BANK = ROOT / "data" / "maho_voice" / "bank"
@@ -46,8 +46,6 @@ AUDIO_DIR = BACKEND / "assets" / "reaction_audio"
 CLIP_COPY = {
     "馬鹿にしないで。本気なんだから。": EQ / "10.wav",
 }
-# Clear mid-register takes plus clip 10. Shouty/noisy stems stay out.
-CLEAN_REF_STEMS = ("2", "8", "10", "11", "18", "51", "64")
 N_FFT = 1024
 HOP = 256
 TEMPERATURES = (0.28, 0.4)
@@ -72,14 +70,6 @@ def reaction_jobs() -> list[tuple[Path, str]]:
             seen.add(path)
             jobs.append((path, text))
     return jobs
-
-
-def clean_refs() -> list[Path]:
-    paths = [EQ / (stem + ".wav") for stem in CLEAN_REF_STEMS]
-    found = [p for p in paths if p.is_file()]
-    if len(found) < 3:
-        raise SystemExit("need clean equalized refs {0}".format(CLEAN_REF_STEMS))
-    return found
 
 
 def hf_ratio(x: np.ndarray, sr: int = SR) -> float:
@@ -221,13 +211,14 @@ class XttsJa:
             gpt_cond_len=8,
             gpt_cond_chunk_len=4,
             sound_norm_refs=True,
-            split_sentences=True,
+            split_sentences=False,
         )
 
 
 def finish(y: np.ndarray, ref: np.ndarray, target: float) -> np.ndarray:
-    # Only crop extra XTTS babble. Two-phrase lines (やめて！ … 離して) must stay.
-    if y.size / SR > 5.5:
+    y = trim_pad(y)
+    y = join_gaps(y, target)
+    if y.size / SR > 6.5:
         y = first_cluster(y, max_gap_s=0.85)
     y = spectral_match(trim_pad(y), ref)
     return match_loudness(trim_pad(y), target)
@@ -245,7 +236,7 @@ def bake(jobs: list[tuple[Path, str]], synth: bool) -> dict:
     report: dict = {"target_rms": target, "ref_hf": ref_hf, "files": []}
     xtts = None
     if synth and any(CLIP_COPY.get(text) is None for _p, text in jobs):
-        xtts = XttsJa(clean_refs())
+        xtts = XttsJa(loud_ref_wavs(EQ))
 
     for path, text in jobs:
         src = CLIP_COPY.get(text)
@@ -266,8 +257,9 @@ def bake(jobs: list[tuple[Path, str]], synth: bool) -> dict:
         for temperature in TEMPERATURES:
             raw = path.with_suffix(".xtts-raw.wav")
             tmp = path.with_suffix(".xtts.wav")
-            print("[bake] synth", path.name, "t={0}".format(temperature), text)
-            xtts.synth(text, raw, temperature=temperature)
+            spoken = synth_text(text)
+            print("[bake] synth", path.name, "t={0}".format(temperature), spoken)
+            xtts.synth(spoken, raw, temperature=temperature)
             ffmpeg_mono16(raw, tmp)
             y = finish(load_s16(tmp), ref, target)
             score = rasp_score(y, ref_hf)
@@ -324,6 +316,9 @@ def check_jobs(jobs: list[tuple[Path, str]]) -> None:
             raise SystemExit("{0} too raspy hf={1:.3f} cap={2:.3f}".format(path.name, hf, cap))
         if x.size / SR < 1.2 or voiced_frac(x) < 0.25:
             raise SystemExit("{0} too thin dur={1:.2f} voiced={2:.2f}".format(path.name, x.size / SR, voiced_frac(x)))
+        gap = max_interior_gap(x)
+        if gap > 0.45:
+            raise SystemExit("{0} two takes gap={1:.2f}s".format(path.name, gap))
     print("ok", len(jobs), "reaction wavs", "ref_hf={0:.3f}".format(ref_hf))
 
 

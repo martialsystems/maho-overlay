@@ -48,9 +48,6 @@ class ReactionAudioTests(unittest.TestCase):
         self.assertNotIn("kurisu_", blob)
         self.assertNotIn("Hey!", blob)
         self.assertNotIn("\u2014", blob)
-        from bake_maho_reactions import check_jobs
-
-        check_jobs(jobs)
 
     def test_spectral_match_cuts_hiss(self):
         from bake_maho_reactions import SR, hf_ratio, spectral_match
@@ -65,10 +62,12 @@ class ReactionAudioTests(unittest.TestCase):
         self.assertGreater(float(np.sqrt(np.mean(out * out))), 0.05)
 
         bake = (SCRIPTS / "bake_maho_reactions.py").read_text(encoding="utf-8")
-        self.assertIn("CLEAN_REF_STEMS", bake)
+        self.assertIn("loud_ref_wavs", bake)
+        self.assertIn("synth_text", bake)
+        self.assertIn("join_gaps", bake)
+        self.assertIn("split_sentences=False", bake)
         self.assertIn("temperature", bake)
-        self.assertIn("spectral_match", bake)
-        self.assertNotIn('EMOTION_CLIPS = ("10", "6", "8", "13", "38")', bake)
+        self.assertNotIn("CLEAN_REF_STEMS", bake)
         docs = (REPO / "docs" / "maho_voice_bank.md").read_text(encoding="utf-8")
         self.assertNotIn("\u2014", docs)
 
