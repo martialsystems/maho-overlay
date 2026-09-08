@@ -64,6 +64,7 @@ Same start later: double-click `start_local.bat` or `start_windows.bat`.
 | `docs/maho_voice.md` | Maho EN+JA script compile (offline) |
 | `docs/maho_chat.md` | Maho chat via Grok subagent (no overlay, no Llama) |
 | `docs/maho_science.md` | Brain science, Amadeus/AI, skeptical time-travel notes |
+| `docs/maho_voice_bank.md` | Japanese Maho voice bank (equalize, then train) |
 | [LICENSE](LICENSE) | MIT for our software |
 | [NOTICE](NOTICE) | Character art terms |
 
