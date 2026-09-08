@@ -78,7 +78,10 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
       let frame = 0;
       let last = performance.now();
       const motion = motionRef.current;
-      motion.onClipEnd = () => onBusyRef.current?.(false);
+      motion.onClipEnd = () => {
+        if (speechRef.current?.isSpeaking()) return;
+        onBusyRef.current?.(false);
+      };
       const speech = new SpeechPlayer({
         onSpeakingChange(speaking) {
           motion.setSpeaking(speaking);

@@ -13,8 +13,11 @@ backend/.venv/bin/python scripts/build_maho_voice_dataset.py
 backend/.venv/bin/python scripts/train_maho_voice_bank.py
 # optional XTTS ja check (needs Coqui):
 backend/.venv/bin/python scripts/train_maho_voice_bank.py --synth --retrain-synth
+# cat/head overlay lines (clip 10 is copied; other lines need Coqui):
+.venv-xtts/bin/python scripts/bake_maho_reactions.py --synth
+backend/.venv/bin/python scripts/bake_maho_reactions.py --check
 ```
 
-Writes gitignored `data/maho_voice/bank/` (equalized wavs, manifest, refs, pickle). Do not commit audio.
+Writes gitignored `data/maho_voice/bank/` (equalized wavs, manifest, refs, pickle). Do not commit that bank. Overlay cat/head lines go in `backend/assets/reaction_audio/` and are committed.
 
 Current run: 71 clips including 57, speech RMS within 2 dB of median 0.253. Speaker encoder on 63 speech clips. XTTS Japanese synth on the 45 s multi-clip ref still tripped the artifact gate (spectral drift vs the recordings; one retry added dropouts). Those synths are not the bank. The bank is the equalized Japanese corpus plus the encoder pickle and GPT-SoVITS filelist.
