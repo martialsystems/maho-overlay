@@ -7,6 +7,7 @@ __pycache__/
 *.env
 .venv/
 .venv-xtts/
+.venv-voice/
 venv/
 
 # Backend runtime
