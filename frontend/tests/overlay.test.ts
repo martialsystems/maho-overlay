@@ -34,6 +34,8 @@ const speech = await readFile(new URL("../src/audio/SpeechPlayer.ts", import.met
 assert.match(speech, /isSpeaking\(\): boolean/);
 assert.match(speech, /emitVisemes/);
 assert.match(speech, /this.audio.volume = 1/);
+const motionSrc = await readFile(new URL("../src/maho/motion.ts", import.meta.url), "utf8");
+assert.doesNotMatch(motionSrc, /idle" \? "mouth-open"/);
 const puppet = await readFile(new URL("../src/components/MahoPuppet.tsx", import.meta.url), "utf8");
 assert.match(puppet, /new Audio\(url\)/);
 assert.match(app, /ZzzLayer/);

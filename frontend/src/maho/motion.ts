@@ -73,7 +73,7 @@ export class MahoMotion {
   setSpeaking(speaking: boolean): void {
     this.speaking = speaking;
     if (speaking) {
-      this.mouth = "mouth-open";
+      this.mouth = "idle";
       this.texture = this.talkTexture();
       return;
     }
@@ -92,12 +92,14 @@ export class MahoMotion {
   }
 
   private talkTexture(): MahoTexture {
-    const mouth = this.mouth === "idle" ? "mouth-open" : this.mouth;
+    // Silence stays closed. Clip 10 has a mid-line pause and a tail;
+    // mapping idle to mouth-open made both look like extra opens.
+    if (this.mouth === "idle") return this.angryTalking ? "angry" : "idle";
     if (this.angryTalking) {
-      if (mouth === "mouth-half") return "angry-mouth-half";
+      if (this.mouth === "mouth-half") return "angry-mouth-half";
       return "angry-mouth-open";
     }
-    return mouth;
+    return this.mouth;
   }
 
   update(deltaSeconds: number): void {

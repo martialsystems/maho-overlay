@@ -155,12 +155,11 @@ export class SpeechPlayer {
     cancelAnimationFrame(this.animationFrame);
     this.animationFrame = 0;
     this.smoothedAmplitude = 0;
-    this.callbacks.onAmplitude(0);
-
     if (this.speaking) {
       this.speaking = false;
       if (this.emitVisemes) this.callbacks.onSpeakingChange(false);
     }
+    this.callbacks.onAmplitude(0);
   }
 
   destroy(): void {

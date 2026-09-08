@@ -13,9 +13,9 @@ Japanese vowels on the slow set:
 | え | half | mouth-half |
 | う | small | mouth-half (until a small PNG exists) |
 | お | open | mouth-open |
-| ん | closed | mouth-open while speaking |
+| ん | closed | mouth-open in the JA classifier only |
 
-The closed overlay mapping is the same contract as MouthDriver silence during a line: keep the mouth open until the clip ends.
+Live overlay RMS silence (pauses and trailing quiet) uses idle. Do not map that idle to mouth-open. Clip 10 has a mid-line pause and a tail.
 
 ## Pair
 
