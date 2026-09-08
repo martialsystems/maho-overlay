@@ -193,7 +193,7 @@ assert.doesNotMatch(
 
 const hits = await readFile(new URL("../src/interactions.ts", import.meta.url), "utf8");
 assert.match(hits, /top: "72%"/);
-assert.match(hits, /top: "12%"/);
+assert.match(hits, /top: "26%"/);
 assert.match(hits, /label: "Cat"/);
 assert.match(hits, /label: "Head"/);
 assert.doesNotMatch(hits, /label: "Talk"/);

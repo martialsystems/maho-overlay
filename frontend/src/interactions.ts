@@ -12,8 +12,9 @@ export const interactions: Record<string, Interaction> = {
     motion: "PatReaction",
     label: "Head",
     speechUrl: "/maho/head.wav",
-    // Crown and hair only. Face and mouth stay out.
-    position: { top: "12%", left: "50%", width: "38%", height: "16%" },
+    // Hair crown in the window (~20% to 34%). Mesh zoom 0.9 plus y 0.05;
+    // a 12% box sits in click-through empty space above her.
+    position: { top: "26%", left: "50%", width: "40%", height: "16%" },
   },
   special: {
     motion: "TapReaction",

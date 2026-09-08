@@ -27,7 +27,7 @@ assert.match(hits, /\/maho\/head\.wav/);
 assert.match(hits, /\/maho\/grr\.wav/);
 assert.match(hits, /sfx: true/);
 assert.equal((hits.match(/sfx: true/g) ?? []).length, 1);
-assert.match(hits, /top: "12%"/);
+assert.match(hits, /top: "26%"/);
 assert.doesNotMatch(hits, /backendId/);
 assert.match(hits, /PatReaction/);
 const speech = await readFile(new URL("../src/audio/SpeechPlayer.ts", import.meta.url), "utf8");
