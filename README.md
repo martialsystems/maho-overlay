@@ -6,6 +6,8 @@
 
 Maho sits on your desktop. Click the cat. After a while she falls asleep.
 
+Discord for suggestions: https://discord.gg/ZafFRsRt
+
 https://github.com/user-attachments/assets/486083ae-9ec0-47ac-88d1-d9fa4ce9d7ce
 
 Speak to Maho now on https://martialgames.net/maho/ (Work in Progress - needs human input for testing)
