@@ -6,7 +6,7 @@
 
 Maho sits on your desktop. Click the cat. After a while she falls asleep.
 
-Speak to Maho now on https://martialgames.net/maho/
+Speak to Maho now on https://martialgames.net/maho/ [Work in Progress - needs human input for testing]
 
 MIT for the software. Character art keeps its own terms: see [NOTICE](NOTICE).
 
