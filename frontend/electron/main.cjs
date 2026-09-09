@@ -123,7 +123,6 @@ function createOverlay() {
     transparent: true,
     hasShadow: false,
     alwaysOnTop: true,
-    focusable: false,
     skipTaskbar: false,
     resizable: false,
     fullscreenable: false,
@@ -143,7 +142,6 @@ function createOverlay() {
   });
 
   win.setAlwaysOnTop(true, "floating");
-  win.setFocusable(false);
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   win.setIgnoreMouseEvents(true, { forward: true });
   win.setMenuBarVisibility(false);
@@ -165,12 +163,6 @@ function createOverlay() {
   void win.loadURL(RENDERER_URL);
   return win;
 }
-
-ipcMain.on("release-focus", (event) => {
-  const win = BrowserWindow.fromWebContents(event.sender);
-  if (!win) return;
-  win.blur();
-});
 
 ipcMain.on("set-click-through", (event, ignore) => {
   const win = BrowserWindow.fromWebContents(event.sender);

@@ -98,7 +98,6 @@ export function attachOverlayPointer(
   function onUp() {
     tracking = false;
     dragging = false;
-    host.releaseFocus();
   }
 
   function onKeyDown(event: KeyboardEvent) {

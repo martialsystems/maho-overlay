@@ -7,9 +7,6 @@ contextBridge.exposeInMainWorld("overlay", {
   moveBy(dx, dy) {
     ipcRenderer.send("move-by", dx, dy);
   },
-  releaseFocus() {
-    ipcRenderer.send("release-focus");
-  },
   quit() {
     ipcRenderer.send("quit");
   },

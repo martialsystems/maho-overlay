@@ -5,7 +5,6 @@ declare global {
     overlay?: {
       setClickThrough: (ignore: boolean) => void;
       moveBy: (dx: number, dy: number) => void;
-      releaseFocus: () => void;
       quit: () => void;
     };
   }
