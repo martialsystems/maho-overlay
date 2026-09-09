@@ -70,10 +70,14 @@ const MahoPuppet = forwardRef<OverlayCharacterHandle, Props>(
         const audio = new Audio(url);
         audio.crossOrigin = "anonymous";
         audio.volume = 1;
+        onBusyRef.current?.(true);
+        const done = () => onBusyRef.current?.(false);
+        audio.addEventListener("ended", done, { once: true });
+        audio.addEventListener("error", done, { once: true });
         try {
           await audio.play();
         } catch {
-          /* click still shows angry even if the wav fails */
+          done();
         }
       },
       stopSpeech() {

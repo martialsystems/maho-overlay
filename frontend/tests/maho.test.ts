@@ -4,6 +4,7 @@ import { buildGridMesh, groupIndexAt, skinVertices } from "../src/maho/buildMesh
 import type { MeshSpec } from "../src/maho/buildMesh";
 import { MahoMotion } from "../src/maho/motion";
 import { MouthDriver, MOUTH_HALF, MOUTH_OPEN } from "../src/maho/viseme";
+import { interactions, nextStep } from "../src/interactions";
 
 function pngSize(bytes: Uint8Array): { width: number; height: number } {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -113,9 +114,35 @@ assert.equal(driver.viseme(MOUTH_OPEN), "mouth-open");
 const headWav = await readFile(new URL("../public/maho/head.wav", import.meta.url));
 assert.ok(headWav.subarray(0, 4).toString("ascii") === "RIFF");
 assert.ok(headWav.byteLength > 300_000);
+const head10aWav = await readFile(new URL("../public/maho/head10a.wav", import.meta.url));
+assert.ok(head10aWav.subarray(0, 4).toString("ascii") === "RIFF");
+assert.ok(head10aWav.byteLength > 50_000);
+assert.ok(head10aWav.byteLength < headWav.byteLength);
+const clip39Wav = await readFile(new URL("../public/maho/clip39.wav", import.meta.url));
+assert.ok(clip39Wav.subarray(0, 4).toString("ascii") === "RIFF");
+assert.ok(clip39Wav.byteLength > 10_000);
 const grrWav = await readFile(new URL("../public/maho/grr.wav", import.meta.url));
 assert.ok(grrWav.subarray(0, 4).toString("ascii") === "RIFF");
 assert.ok(grrWav.byteLength > 10_000);
+
+assert.deepEqual(interactions.head.clips.map((c) => c.url), [
+  "/maho/clip39.wav",
+  "/maho/head10a.wav",
+  "/maho/head.wav",
+]);
+assert.equal(interactions.head.clips[0]?.sfx, true);
+assert.equal(interactions.head.clips[1]?.sfx, undefined);
+assert.deepEqual(interactions.special.clips.map((c) => c.url), [
+  "/maho/clip39.wav",
+  "/maho/grr.wav",
+]);
+assert.equal(interactions.special.clips[0]?.motion, "AnnoyedReaction");
+assert.equal(interactions.special.clips[1]?.motion, "TapReaction");
+assert.equal(nextStep(0, 3), 1);
+assert.equal(nextStep(1, 3), 2);
+assert.equal(nextStep(2, 3), 0);
+assert.equal(nextStep(0, 2), 1);
+assert.equal(nextStep(1, 2), 0);
 
 const talking = new MahoMotion();
 talking.setSpeaking(true);
@@ -150,10 +177,22 @@ assert.equal(motion.play("TapReaction"), "started");
 assert.equal(motion.texture, "angry");
 assert.equal(motion.angerMark, true);
 assert.equal(motion.play("PatReaction"), "busy");
+assert.equal(motion.play("AnnoyedReaction"), "busy");
 motion.setMouth("mouth-open");
 motion.update(0.016);
 assert.equal(motion.texture, "angry");
 for (let i = 0; i < 20; i++) motion.update(0.1);
+assert.equal(motion.texture, "idle");
+assert.equal(motion.angerMark, false);
+assert.equal(motion.busy, false);
+
+assert.equal(motion.play("AnnoyedReaction"), "started");
+assert.equal(motion.texture, "angry");
+assert.equal(motion.angerMark, false);
+motion.update(0.016);
+assert.equal(motion.texture, "angry");
+assert.equal(motion.angerMark, false);
+for (let i = 0; i < 12; i++) motion.update(0.1);
 assert.equal(motion.texture, "idle");
 assert.equal(motion.angerMark, false);
 assert.equal(motion.busy, false);
@@ -210,8 +249,12 @@ assert.match(hits, /label: "Head"/);
 assert.doesNotMatch(hits, /label: "Talk"/);
 assert.doesNotMatch(hits, /talk\.wav/);
 assert.doesNotMatch(hits, /PatReaction/);
+assert.match(hits, /\/maho\/clip39\.wav/);
+assert.match(hits, /\/maho\/head10a\.wav/);
 assert.match(hits, /\/maho\/head\.wav/);
+assert.match(hits, /AnnoyedReaction/);
 assert.match(hits, /sfx: true/);
+assert.match(app, /if \(sleeping\) setCycle/);
 assert.match(puppetSrc, /MahoMeshPlayer/);
 assert.doesNotMatch(puppetSrc, /MahoLayerPlayer/);
 assert.doesNotMatch(puppetSrc, /layers\.json/);

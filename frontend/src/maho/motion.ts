@@ -16,9 +16,10 @@ const BLINK_EVERY_MS = 3200;
 const BLINK_HOLD_MS = 90;
 const PAT_MS = 900;
 const TAP_MS = 1700;
+const ANNOY_MS = 1100;
 
 type Clip = {
-  name: "PatReaction" | "TapReaction";
+  name: "PatReaction" | "TapReaction" | "AnnoyedReaction";
   elapsed: number;
   duration: number;
 };
@@ -60,12 +61,26 @@ export class MahoMotion {
       this.clip = { name: "TapReaction", elapsed: 0, duration: TAP_MS };
       return "started";
     }
+    if (group === "AnnoyedReaction") {
+      this.busy = true;
+      this.angryTalking = false;
+      this.angerMark = false;
+      this.mouth = "idle";
+      this.texture = "angry";
+      this.clip = { name: "AnnoyedReaction", elapsed: 0, duration: ANNOY_MS };
+      return "started";
+    }
     return "missing";
   }
 
   setSleeping(sleeping: boolean): void {
     this.sleeping = sleeping;
-    if (sleeping && this.clip?.name !== "TapReaction" && !this.angryTalking) {
+    if (
+      sleeping &&
+      this.clip?.name !== "TapReaction" &&
+      this.clip?.name !== "AnnoyedReaction" &&
+      !this.angryTalking
+    ) {
       this.texture = "eyes-closed";
     }
   }
@@ -122,6 +137,11 @@ export class MahoMotion {
         this.angerMark = false;
         if (this.speaking) this.texture = this.talkTexture();
         else this.texture = this.sleeping ? "eyes-closed" : "idle";
+      } else if (this.clip.name === "AnnoyedReaction") {
+        this.shakeX = 0;
+        this.faceRot = 0;
+        this.angerMark = false;
+        this.texture = "angry";
       } else {
         const shake = Math.sin(t * Math.PI * 8) * (1 - t) * 0.008;
         this.shakeX = shake;

@@ -3,12 +3,15 @@ import MahoPuppet from "./components/MahoPuppet";
 import ZzzLayer from "./components/ZzzLayer";
 import { startOverlayPointer } from "./overlayPointer";
 import { useKurisuSleep } from "./useKurisuSleep";
-import { interactions } from "./interactions";
+import { interactions, nextStep } from "./interactions";
 import type { OverlayCharacterHandle } from "./overlayCharacter";
 import type { InteractionName } from "./interactions";
 
+const ZERO_CYCLE: Record<InteractionName, number> = { head: 0, special: 0 };
+
 export default function App() {
   const [busy, setBusy] = useState(false);
+  const [cycle, setCycle] = useState(ZERO_CYCLE);
   const characterRef = useRef<OverlayCharacterHandle>(null);
   const { sleeping, noteActivity } = useKurisuSleep(characterRef);
 
@@ -19,31 +22,37 @@ export default function App() {
     });
   }, [noteActivity]);
 
+  useEffect(() => {
+    if (sleeping) setCycle(ZERO_CYCLE);
+  }, [sleeping]);
+
   async function handleInteraction(name: InteractionName) {
     if (busy) return;
     noteActivity();
     const interaction = interactions[name];
-    if (interaction.sfx && interaction.speechUrl) {
-      if (interaction.motion) {
-        const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
+    const clips = interaction.clips;
+    if (!clips.length) return;
+    const index = cycle[name] % clips.length;
+    const clip = clips[index];
+    const motion = clip.motion ?? interaction.motion;
+    if (clip.sfx) {
+      if (motion) {
+        const result = characterRef.current?.playMotion(motion) ?? "not-ready";
         if (result !== "started") return;
       }
-      void characterRef.current?.playSfx(interaction.speechUrl);
+      void characterRef.current?.playSfx(clip.url);
+      setCycle((current) => ({ ...current, [name]: nextStep(index, clips.length) }));
       return;
     }
-    if (interaction.speechUrl) {
-      if (interaction.motion) {
-        const result = characterRef.current?.playMotion(interaction.motion) ?? "not-ready";
-        if (result !== "started") return;
-      }
-      const url = interaction.speechUrl;
-      void characterRef.current?.prepareSpeech().then(() =>
-        characterRef.current?.playSpeech(url),
-      );
-      return;
+    if (motion) {
+      const result = characterRef.current?.playMotion(motion) ?? "not-ready";
+      if (result !== "started") return;
     }
-    if (!interaction.motion) return;
-    characterRef.current?.playMotion(interaction.motion);
+    const url = clip.url;
+    void characterRef.current?.prepareSpeech().then(() =>
+      characterRef.current?.playSpeech(url),
+    );
+    setCycle((current) => ({ ...current, [name]: nextStep(index, clips.length) }));
   }
 
   return (

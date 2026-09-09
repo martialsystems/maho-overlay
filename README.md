@@ -10,8 +10,8 @@ MIT for the software. Character art keeps its own terms: see [NOTICE](NOTICE).
 
 ## Use it
 
-- Cat: she gets mad, mouth stays shut, and the recorded grr plays.
-- Head: the top of her hair. Clip 10 plays and the mouth follows it.
+- Cat: clip 39 (angry face, no red mark), then grr (angry with the mark). Then that loops. Sleep starts the loop over.
+- Head: clip 39 with no mouth move, then the first phrase of clip 10, then all of clip 10. Then that loops. Sleep starts the loop over.
 - Drag: grab her anywhere and move the window. A short click on the cat still fires.
 - 45 seconds with no click: eyes close, `z`s over her head
 - Click again: she wakes

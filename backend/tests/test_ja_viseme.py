@@ -190,7 +190,7 @@ class SourceContractTests(unittest.TestCase):
         self.assertIn("Relative RMS", viseme)
         self.assertNotIn("predict_ja_viseme", viseme)
         self.assertNotIn("viseme_logreg", viseme)
-        self.assertIn('speechUrl: "/maho/head.wav"', interactions)
+        self.assertIn('url: "/maho/head.wav"', interactions)
         self.assertNotIn("talk.wav", interactions)
         self.assertNotIn('label: "Talk"', interactions)
 
