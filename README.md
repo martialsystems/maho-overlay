@@ -12,10 +12,9 @@ MIT for the software. Character art keeps its own terms: see [NOTICE](NOTICE).
 
 ## Use it
 
-- Cat: clip 39 (angry face, no red mark), then grr (angry with the mark). Then that loops. Sleep starts the loop over.
-- Head: clip 39 with no mouth move, then the first phrase of clip 10, then all of clip 10. Then that loops. Sleep starts the loop over.
-- Drag: grab her anywhere and move the window. A short click on the cat still fires.
-- 45 seconds with no click: eyes close, `z`s over her head
+- I wouldn't dare touch Maho's cat or pat her head, she's very territorial. 
+- Drag: grab her anywhere and move the window. 
+- 45 seconds idle and she begins to sleep.
 - Click again: she wakes
 - Right-click, or the Maho Overlay menu: Size (Small, Medium, Large, XL) and Quit. Large is the starting size. The art stays the full 1264×1568 PNG.
 
