@@ -67,9 +67,11 @@ export default function App() {
             <button
               key={name}
               type="button"
+              tabIndex={-1}
               className="touch-button touch-point"
               style={interaction.position}
               aria-label={interaction.label}
+              onMouseDown={(event) => event.preventDefault()}
               onClick={() => handleInteraction(name)}
             >
               {interaction.label}

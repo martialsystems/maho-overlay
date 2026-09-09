@@ -58,6 +58,13 @@ assert.match(css, /\.zzz-layer/);
 assert.match(main, /transparent:\s*true/);
 assert.match(main, /hasShadow:\s*false/);
 assert.match(main, /alwaysOnTop:\s*true/);
+assert.match(main, /focusable:\s*false/);
+assert.match(main, /setFocusable\(false\)/);
+assert.match(main, /release-focus/);
+assert.match(pointer, /releaseFocus/);
+assert.match(pointer, /keydown/);
+assert.match(app, /tabIndex=\{-1\}/);
+assert.match(app, /onMouseDown/);
 assert.match(css, /box-shadow:\s*none/);
 function sizeOf(id: string) {
   const match = main.match(new RegExp(`${id}: \\{ width: (\\d+), height: (\\d+) \\}`));

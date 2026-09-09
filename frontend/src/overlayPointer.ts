@@ -98,6 +98,14 @@ export function attachOverlayPointer(
   function onUp() {
     tracking = false;
     dragging = false;
+    host.releaseFocus();
+  }
+
+  function onKeyDown(event: KeyboardEvent) {
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      event.stopPropagation();
+    }
   }
 
   function onMouseUp(event: MouseEvent) {
@@ -116,6 +124,7 @@ export function attachOverlayPointer(
   window.addEventListener("mousedown", onDown);
   window.addEventListener("mouseup", onMouseUp);
   window.addEventListener("click", onClick, true);
+  window.addEventListener("keydown", onKeyDown, true);
   window.addEventListener("blur", onUp);
 
   return () => {
@@ -124,6 +133,7 @@ export function attachOverlayPointer(
     window.removeEventListener("mousedown", onDown);
     window.removeEventListener("mouseup", onMouseUp);
     window.removeEventListener("click", onClick, true);
+    window.removeEventListener("keydown", onKeyDown, true);
     window.removeEventListener("blur", onUp);
     host.setClickThrough(true);
     document.documentElement.style.cursor = "";
