@@ -6,6 +6,8 @@
 
 Maho sits on your desktop. Click the cat. After a while she falls asleep.
 
+https://github.com/user-attachments/assets/486083ae-9ec0-47ac-88d1-d9fa4ce9d7ce
+
 Speak to Maho now on https://martialgames.net/maho/ (Work in Progress - needs human input for testing)
 
 MIT for the software. Character art keeps its own terms: see [NOTICE](NOTICE).
@@ -61,6 +63,7 @@ Same start later: double-click `start_local.bat` or `start_windows.bat`.
 
 | Path | Role |
 |------|------|
+| `docs/demo.mp4` | Screen-recording demo |
 | `frontend/` | Mesh puppet window and Electron shell |
 | `backend/` | Local Flask process the launcher starts |
 | `start_local.command` | Starts the overlay on a Mac |

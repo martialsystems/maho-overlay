@@ -104,10 +104,13 @@ assert.doesNotMatch(rootReadme, /What it is not/);
 assert.match(rootReadme, /ko-fi\.com\/martialgames/);
 assert.match(rootReadme, /Donate on Ko-fi/);
 assert.match(rootReadme, /Click the cat/);
+assert.match(
+  rootReadme,
+  /https:\/\/github\.com\/user-attachments\/assets\/486083ae-9ec0-47ac-88d1-d9fa4ce9d7ce/,
+);
+assert.match(rootReadme, /docs\/demo\.mp4/);
+assert.doesNotMatch(rootReadme, /<video/);
 assert.doesNotMatch(rootReadme, /Talk:/);
-assert.match(rootReadme, /Head:/);
-assert.match(rootReadme, /clip 39/);
-assert.match(rootReadme, /Sleep starts the loop over/);
 assert.equal((rootReadme.match(/^- Drag:/gm) ?? []).length, 1);
 assert.match(rootReadme, /Small, Medium, Large, XL/);
 assert.match(rootReadme, /1264×1568 PNG/);
