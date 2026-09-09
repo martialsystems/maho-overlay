@@ -1,5 +1,9 @@
 # maho-overlay
 
+<p align="right">
+  <a href="https://ko-fi.com/martialgames"><img src="https://img.shields.io/badge/Donate-Ko--fi-ff5e5b?style=flat-square&logo=ko-fi&logoColor=white" alt="Donate on Ko-fi" /></a>
+</p>
+
 Maho sits on your desktop. Click the cat. After a while she falls asleep.
 
 MIT for the software. Character art keeps its own terms: see [NOTICE](NOTICE).

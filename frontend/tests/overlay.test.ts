@@ -90,6 +90,8 @@ assert.match(rootReadme, /py -3\.12/);
 assert.match(rootReadme, /martialsystems\/maho-overlay/);
 assert.doesNotMatch(rootReadme, /\u2014/);
 assert.doesNotMatch(rootReadme, /What it is not/);
+assert.match(rootReadme, /ko-fi\.com\/martialgames/);
+assert.match(rootReadme, /Donate on Ko-fi/);
 assert.match(rootReadme, /Click the cat/);
 assert.doesNotMatch(rootReadme, /Talk:/);
 assert.match(rootReadme, /Head:/);
